@@ -108,7 +108,7 @@ class trystack::controller(){
     }
 
     class {'horizon':
-        secret_key => '$horizon_secret_key',
+        secret_key => "$horizon_secret_key",
         keystone_host => '127.0.0.1',
     }
 
