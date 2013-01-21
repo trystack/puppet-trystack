@@ -41,7 +41,7 @@ class trystack::controller(){
         nova_user_password    => "$nova_user_password",
         cinder_user_password  => "",
         quantum_user_password => "",
-        public_address        => "$controller_node_public",
+        public_address        => "127.0.0.1",
         quantum               => false,
         cinder                => false,
         enabled               => true,
@@ -52,6 +52,7 @@ class trystack::controller(){
         db_host               => "127.0.0.1",
         glance_user_password  => "$glance_user_password",
         glance_db_password    => "$glance_db_password",
+        require               => Class["openstack::db::mysql"],
     }
 
     # Configure Nova
@@ -60,6 +61,7 @@ class trystack::controller(){
         image_service        => 'nova.image.glance.GlanceImageService',
         glance_api_servers   => "http://127.0.0.1:9292/v1",
         verbose              => $verbose,
+        require               => Class["openstack::db::mysql", "qpid::server"],
     }
 
     class { 'nova::api':
@@ -68,7 +70,10 @@ class trystack::controller(){
         auth_host         => "127.0.0.1",
     }
 
-    nova_config { 'auto_assign_floating_ip': value => 'True' }
+    nova_config {
+        'auto_assign_floating_ip': value => 'True';
+        "rpc_backend": value => "nova.rpc.impl_qpid";
+    }
     class { 'nova::network':
         private_interface => "$private_interface",
         public_interface  => "$public_interface",
@@ -90,9 +95,33 @@ class trystack::controller(){
         enabled => true,
     }
 
+
+    package {"horizon-packages":
+        name => ["python-memcached", "python-netaddr"],
+        notify => Class["horizon"],
+    }
+
+    file {"/etc/httpd/conf.d/rootredirect.conf":
+        ensure => present,
+        content => 'RedirectMatch ^/$ /dashboard/',
+        notify => File["/etc/httpd/conf.d/openstack-dashboard.conf"],
+    }
+
+    class {'horizon':
+        secret_key => '$horizon_secret_key',
+        keystone_host => '127.0.0.1',
+    }
+
+    class {'memcached':}
+
+    class {'apache':}
+    class {'apache::mod::wsgi':}
+    file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
+
     firewall { '001 controller incoming':
         proto    => 'tcp',
-        dport    => ['3306', '5000', '5672', '8774', '9292'],
+        # need to refine this list
+        dport    => ['80', '3306', '5000', '35357', '5672', '8773', '8774', '8775', '8776', '9292', '6080'],
         action   => 'accept',
     }
 }
