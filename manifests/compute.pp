@@ -3,11 +3,15 @@
 class trystack::compute(){
     # Configure Nova
     nova_config{
-        "network_host": value => "${controller_node_public}";
+        'auto_assign_floating_ip': value => 'True';
+        #"network_host": value => "${controller_node_public}";
+        "network_host": value => "$::ipaddress";
         "libvirt_inject_partition": value => "-1";
-        "metadata_host": value => "$controller_node_public";
+        #"metadata_host": value => "$controller_node_public";
+        "metadata_host": value => "$::ipaddress";
         "qpid_hostname": value => "$controller_node_public";
         "rpc_backend": value => "nova.rpc.impl_qpid";
+        "multi_host": value => "True";
     }
 
     class { 'nova':
@@ -38,6 +42,23 @@ class trystack::compute(){
         vncserver_proxyclient_address => "$ipaddress",
     }
 
+    class { 'nova::api':
+        enabled           => true,
+        admin_password    => "$nova_user_password",
+        auth_host         => "$controller_node_public",
+    }
+
+    class { 'nova::network':
+        private_interface => "$private_interface",
+        public_interface  => "$public_interface",
+        fixed_range       => "$fixed_network_range",
+        floating_range    => "$floating_network_range",
+        network_manager   => "nova.network.manager.FlatDHCPManager",
+        config_overrides  => {"force_dhcp_release" => false},
+        create_networks   => true,
+        enabled           => true,
+        install_service   => true,
+    }
 
     firewall { '001 nove compute incoming':
         proto    => 'tcp',

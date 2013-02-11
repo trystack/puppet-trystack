@@ -73,17 +73,8 @@ class trystack::controller(){
     nova_config {
         'auto_assign_floating_ip': value => 'True';
         "rpc_backend": value => "nova.rpc.impl_qpid";
-    }
-    class { 'nova::network':
-        private_interface => "$private_interface",
-        public_interface  => "$public_interface",
-        fixed_range       => "$fixed_network_range",
-        floating_range    => "$floating_network_range",
-        network_manager   => "nova.network.manager.FlatDHCPManager",
-        config_overrides  => {},
-        create_networks   => true,
-        enabled           => true,
-        install_service   => true,
+        "multi_host": value => "True";
+        "force_dhcp_release": value => "False";
     }
 
     class { [ 'nova::scheduler', 'nova::cert', 'nova::consoleauth' ]:
