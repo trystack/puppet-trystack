@@ -4,6 +4,27 @@
 #
 
 class trystack::controller(){
+
+    pacemaker::corosync { "trystack": }
+
+    pacemaker::corosync::node { "10.100.0.2": }
+    pacemaker::corosync::node { "10.100.0.3": }
+
+    pacemaker::crm::ip { "8.21.28.222":
+        address => "8.21.28.222",
+    }
+    pacemaker::crm::ip { "10.100.0.222":
+        address => "10.100.0.222",
+    }
+
+
+    pacemaker::stonith::ipmilan { "$ipmi_address":
+        address  => "$ipmi_address",
+        user     => "$ipmi_user",
+        password => "$ipmi_pass",
+        hostlist => "$ipmi_host_list",
+    }
+
     class {"openstack::db::mysql":
         mysql_root_password  => "$mysql_root_password",
         keystone_db_password => "$keystone_db_password",
