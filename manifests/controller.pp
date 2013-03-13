@@ -18,12 +18,12 @@ class trystack::controller(){
     }
 
 
-    pacemaker::stonith::ipmilan { "$ipmi_address":
-        address  => "$ipmi_address",
-        user     => "$ipmi_user",
-        password => "$ipmi_pass",
-        hostlist => "$ipmi_host_list",
-    }
+    #pacemaker::stonith::ipmilan { "$ipmi_address":
+    #    address  => "$ipmi_address",
+    #    user     => "$ipmi_user",
+    #    password => "$ipmi_pass",
+    #    hostlist => "$ipmi_host_list",
+    #}
 
     class {"openstack::db::mysql":
         mysql_root_password  => "$mysql_root_password",
@@ -53,7 +53,7 @@ class trystack::controller(){
 
 
     class {"openstack::keystone":
-        db_host               => "127.0.0.1",
+        db_host               => "${pacemaker_priv_floating_ip}",
         db_password           => "$keystone_db_password",
         admin_token           => "$keystone_admin_token",
         admin_email           => "$admin_email",
@@ -62,15 +62,22 @@ class trystack::controller(){
         nova_user_password    => "$nova_user_password",
         cinder_user_password  => "",
         quantum_user_password => "",
-        public_address        => "127.0.0.1",
+        public_address        => "${pacemaker_pub_floating_ip}",
+        admin_address         => "${pacemaker_priv_floating_ip}",
+        internal_address      => "${pacemaker_priv_floating_ip}",
         quantum               => false,
         cinder                => false,
         enabled               => true,
         require               => Class["openstack::db::mysql"],
     }
 
+    class { 'swift::keystone::auth':
+        password => $swift_admin_password,
+        address  => "${pacemaker_priv_floating_ip}",
+    }
+
     class {"openstack::glance":
-        db_host               => "127.0.0.1",
+        db_host               => "${pacemaker_priv_floating_ip}",
         glance_user_password  => "$glance_user_password",
         glance_db_password    => "$glance_db_password",
         require               => Class["openstack::db::mysql"],
@@ -78,9 +85,9 @@ class trystack::controller(){
 
     # Configure Nova
     class { 'nova':
-        sql_connection       => "mysql://nova:${nova_db_password}@127.0.0.1/nova",
+        sql_connection       => "mysql://nova:${nova_db_password}@${pacemaker_priv_floating_ip}/nova",
         image_service        => 'nova.image.glance.GlanceImageService',
-        glance_api_servers   => "http://127.0.0.1:9292/v1",
+        glance_api_servers   => "http://${pacemaker_priv_floating_ip}:9292/v1",
         verbose              => $verbose,
         require               => Class["openstack::db::mysql", "qpid::server"],
     }
@@ -88,7 +95,7 @@ class trystack::controller(){
     class { 'nova::api':
         enabled           => true,
         admin_password    => "$nova_user_password",
-        auth_host         => "127.0.0.1",
+        auth_host         => "${pacemaker_priv_floating_ip}",
     }
 
     nova_config {
@@ -121,7 +128,7 @@ class trystack::controller(){
 
     class {'horizon':
         secret_key => "$horizon_secret_key",
-        keystone_host => '127.0.0.1',
+        keystone_host => "${pacemaker_priv_floating_ip}",
     }
 
     class {'memcached':}
@@ -134,59 +141,6 @@ class trystack::controller(){
         proto    => 'tcp',
         # need to refine this list
         dport    => ['80', '3306', '5000', '35357', '5672', '8773', '8774', '8775', '8776', '9292', '6080'],
-        action   => 'accept',
-    }
-
-
-    #### Swift ####
-    package { 'curl': ensure => present }
-    
-    class { 'memcached': }
-    
-    class { 'swift::proxy':
-      proxy_local_net_ip => '10.100.0.222', #swift proxy address
-      pipeline           => [
-    #    'catch_errors',
-        'healthcheck',
-        'cache',
-    #    'ratelimit',
-        'authtoken',
-        'keystone',
-        'proxy-server'
-      ],
-      account_autocreate => true,
-    }
-    
-    # configure all of the middlewares
-    class { [
-        'swift::proxy::catch_errors',
-        'swift::proxy::healthcheck',
-        'swift::proxy::cache',
-    ]: }
-    
-    class { 'swift::proxy::ratelimit':
-        clock_accuracy         => 1000,
-        max_sleep_time_seconds => 60,
-        log_sleep_time_seconds => 0,
-        rate_buffer_seconds    => 5,
-        account_ratelimit      => 0
-    }
-    
-    class { 'swift::proxy::keystone':
-        operator_roles => ['admin', 'SwiftOperator'],
-    }
-    
-    class { 'swift::proxy::authtoken':
-        admin_user        => 'swift',
-        admin_tenant_name => 'services',
-        admin_password    => $swift_user_password,
-        # assume that the controller host is the swift api server
-        auth_host         => '10.100.0.222', #keystone
-    }
-    
-    firewall { '001 swift proxy incoming':
-        proto    => 'tcp',
-        dport    => ['8080'],
         action   => 'accept',
     }
 }
