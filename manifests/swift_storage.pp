@@ -1,4 +1,4 @@
-class trystack::swift_node inherits trystack::swift_common {
+class trystack::swift_storage inherits trystack::swift_common {
 
   #### Storage ####
   class { 'swift::storage::all':
