@@ -6,7 +6,7 @@ class trystack::swift_storage inherits trystack::swift_common {
     require => Class['swift'],
   }
   
-  swift::storage::ext4 { "lv_swift":
+  swift::storage::ext4 { "lvswift":
        device => "/dev/vg_${$::hostname}/lv_swift",
   }
 
@@ -19,14 +19,32 @@ class trystack::swift_storage inherits trystack::swift_common {
     }
   }
 
-  @@ring_object_device { "$::ipaddress_em1:6000/device1":
-   zone        => $swift_zone,
+  @@ring_object_device { "$::ipaddress_em1:6000/lv_swift":
+   zone        => 1,
    weight      => 10, }
-  @@ring_container_device { "$::ipaddress_em1:6001/device1":
-   zone        => $swift_zone,
+  @@ring_container_device { "$::ipaddress_em1:6001/lv_swift":
+   zone        => 1,
    weight      => 10, }
-  @@ring_account_device { "$::ipaddress_em1:6002/device1":
-   zone        => $swift_zone,
+  @@ring_account_device { "$::ipaddress_em1:6002/lv_swift":
+   zone        => 1,
+   weight      => 10, }
+  @@ring_object_device { "$::ipaddress_em1:6000/lv_swift":
+   zone        => 2,
+   weight      => 10, }
+  @@ring_container_device { "$::ipaddress_em1:6001/lv_swift":
+   zone        => 2,
+   weight      => 10, }
+  @@ring_account_device { "$::ipaddress_em1:6002/lv_swift":
+   zone        => 2,
+   weight      => 10, }
+  @@ring_object_device { "$::ipaddress_em1:6000/lv_swift":
+   zone        => 3,
+   weight      => 10, }
+  @@ring_container_device { "$::ipaddress_em1:6001/lv_swift":
+   zone        => 3,
+   weight      => 10, }
+  @@ring_account_device { "$::ipaddress_em1:6002/lv_swift":
+   zone        => 3,
    weight      => 10, }
 
   swift::ringsync{["account","container","object"]:
