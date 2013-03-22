@@ -30,7 +30,7 @@ class trystack::controller(){
         keystone_db_password => "$keystone_db_password",
         glance_db_password   => "$glance_db_password",
         nova_db_password     => "$nova_db_password",
-        cinder_db_password   => "",
+        cinder_db_password   => "$cinder_db_password",
         quantum_db_password  => "",
 
         # MySQL
@@ -38,7 +38,7 @@ class trystack::controller(){
         mysql_account_security => true,
 
         # Cinder
-        cinder                 => false,
+        cinder                 => true,
 
         # quantum
         quantum                => false,
@@ -60,13 +60,13 @@ class trystack::controller(){
         admin_password        => "$admin_password",
         glance_user_password  => "$glance_user_password",
         nova_user_password    => "$nova_user_password",
-        cinder_user_password  => "",
+        cinder_user_password  => "$cinder_user_password",
         quantum_user_password => "",
         public_address        => "${pacemaker_pub_floating_ip}",
         admin_address         => "${pacemaker_priv_floating_ip}",
         internal_address      => "${pacemaker_priv_floating_ip}",
         quantum               => false,
-        cinder                => false,
+        cinder                => true,
         enabled               => true,
         require               => Class["openstack::db::mysql"],
     }
