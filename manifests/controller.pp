@@ -66,23 +66,71 @@ class trystack::controller(){
         public_address        => "${pacemaker_pub_floating_ip}",
         admin_address         => "${pacemaker_priv_floating_ip}",
         internal_address      => "${pacemaker_priv_floating_ip}",
+        glance_public_address    => "${pacemaker_pub_floating_ip}",
+        glance_internal_address  => "${pacemaker_priv_floating_ip}",
+        glance_admin_address     => "${pacemaker_priv_floating_ip}",
+        nova_public_address      => "${pacemaker_pub_floating_ip}",
+        nova_internal_address    => "${pacemaker_priv_floating_ip}",
+        nova_admin_address       => "${pacemaker_priv_floating_ip}",
+        cinder_public_address    => "${pacemaker_pub_floating_ip}",
+        cinder_internal_address  => "${pacemaker_priv_floating_ip}",
+        cinder_admin_address     => "${pacemaker_priv_floating_ip}",
+
         quantum               => false,
         cinder                => true,
         enabled               => true,
         require               => Class["openstack::db::mysql"],
     }
 
+    keystone_config {
+    'signing/token_format':  value => "UUID";
+    }
+
+
     class { 'swift::keystone::auth':
         password => $swift_admin_password,
         address  => "${pacemaker_priv_floating_ip}",
     }
 
-    class {"openstack::glance":
-        db_host               => "${pacemaker_priv_floating_ip}",
-        glance_user_password  => "$glance_user_password",
-        glance_db_password    => "$glance_db_password",
-        require               => Class["openstack::db::mysql"],
+    $glance_sql_connection = "mysql://glance:${glance_db_password}@${pacemaker_priv_floating_ip}/glance"
+
+    # Install and configure glance-api
+    class { 'glance::api':
+      verbose           => $verbose,
+      debug             => $verbose,
+      auth_type         => 'keystone',
+      auth_port         => '35357',
+      auth_host         => $keystone_host,
+      keystone_tenant   => 'services',
+      keystone_user     => 'glance',
+      keystone_password => $glance_user_password,
+      sql_connection    => $glance_sql_connection,
+      enabled           => $enabled,
+      require           => Class["openstack::db::mysql"],
     }
+
+    # Install and configure glance-registry
+    class { 'glance::registry':
+      verbose           => $verbose,
+      debug             => $verbose,
+      auth_host         => $keystone_host,
+      auth_port         => '35357',
+      auth_type         => 'keystone',
+      keystone_tenant   => 'services',
+      keystone_user     => 'glance',
+      keystone_password => $glance_user_password,
+      sql_connection    => $glance_sql_connection,
+      enabled           => $enabled,
+      require           => Class["openstack::db::mysql"],
+    }
+
+    # Configure glance storage backend
+    class { 'glance::backend::swift':
+      swift_store_auth_address => 'http://10.100.0.222:5000/v2.0/',
+      swift_store_user => $glance_swift_store_user,
+      swift_store_key => $glance_swift_store_key,
+    }
+
 
     # Configure Nova
     class { 'nova':
@@ -91,6 +139,9 @@ class trystack::controller(){
         glance_api_servers   => "http://${pacemaker_priv_floating_ip}:9292/v1",
         verbose              => $verbose,
         require               => Class["openstack::db::mysql", "qpid::server"],
+        rpc_backend          => 'nova.openstack.common.rpc.impl_qpid',
+        qpid_hostname        => "$pacemaker_priv_floating_ip",
+
     }
 
     class { 'nova::api':
@@ -100,10 +151,15 @@ class trystack::controller(){
     }
 
     nova_config {
-        'auto_assign_floating_ip': value => 'True';
-        "rpc_backend": value => "nova.rpc.impl_qpid";
-        "multi_host": value => "True";
-        "force_dhcp_release": value => "False";
+        'DEFAULT/auto_assign_floating_ip': value => 'True';
+        "DEFAULT/multi_host": value => "True";
+        "DEFAULT/force_dhcp_release": value => "False";
+        "DEFAULT/quota_volumes": value => 1;
+        "DEFAULT/quota_gigabytes": value => 1;
+        "DEFAULT/quota_instances": value => 1;
+        "DEFAULT/quota_cores": value => 1;
+        "DEFAULT/quota_ram": value => 512;
+        "DEFAULT/quota_floating_ips": value => 1;
     }
 
     class { [ 'nova::scheduler', 'nova::cert', 'nova::consoleauth' ]:
@@ -130,6 +186,27 @@ class trystack::controller(){
     class {'horizon':
         secret_key => "$horizon_secret_key",
         keystone_host => "${pacemaker_priv_floating_ip}",
+    }
+
+    file {'/usr/lib/python2.6/site-packages/horizon/templates/splash.html':
+        require => Package['openstack-dashboard'],
+        source => 'puppet:///modules/trystack/usr/lib/python2.6/site-packages/horizon/templates/splash.html',
+    }
+    file {'/usr/lib/python2.6/site-packages/horizon/templates/auth/login.html':
+        require => Package['openstack-dashboard'],
+        source => 'puppet:///modules/trystack/usr/lib/python2.6/site-packages/horizon/templates/auth/login.html',
+    }
+    file {'/usr/lib/python2.6/site-packages/horizon/templates/auth/_login.html':
+        require => Package['openstack-dashboard'],
+        source => 'puppet:///modules/trystack/usr/lib/python2.6/site-packages/horizon/templates/auth/_login.html',
+    }
+    file {'/usr/share/openstack-dashboard/openstack_dashboard/settings.py':
+        require => Package['openstack-dashboard'],
+        source => 'puppet:///modules/trystack/usr/share/openstack-dashboard/openstack_dashboard/settings.py',
+    }
+    file {'/usr/share/openstack-dashboard/openstack_dashboard/urls.py':
+        require => Package['openstack-dashboard'],
+        source => 'puppet:///modules/trystack/usr/share/openstack-dashboard/openstack_dashboard/urls.py',
     }
 
     class {'memcached':}
