@@ -39,7 +39,8 @@ class { 'nova::compute::libvirt':
 
 exec {'load_kvm':
     user => 'root',
-    command => '/bin/sh /etc/sysconfig/modules/kvm.modules'
+    command => '/bin/sh /etc/sysconfig/modules/kvm.modules',
+    unless => '/sbin/lsmod | grep kvm',
 }
 
 Class['nova::compute']-> Exec["load_kvm"]
