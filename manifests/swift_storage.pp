@@ -48,7 +48,7 @@ class trystack::swift_storage inherits trystack::swift_common {
    weight      => 10, }
 
   swift::ringsync{["account","container","object"]:
-      ring_server => '10.100.0.2',
+      ring_server => "$private_ip",
       before => Class['swift::storage::all'],
       require => Class['swift'],
   }

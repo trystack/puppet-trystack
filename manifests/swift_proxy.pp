@@ -6,7 +6,7 @@ class trystack::swift_proxy inherits trystack::swift_common {
     #class { 'memcached': }
     
     class { 'swift::proxy':
-      proxy_local_net_ip => '10.100.0.222', #swift proxy address
+      proxy_local_net_ip => "$public_ip", #swift proxy address
       pipeline           => [
     #    'catch_errors',
         'healthcheck',
@@ -43,7 +43,7 @@ class trystack::swift_proxy inherits trystack::swift_common {
         admin_tenant_name => 'services',
         admin_password    => $swift_admin_password,
         # assume that the controller host is the swift api server
-        auth_host         => '10.100.0.222', #keystone
+        auth_host         => "$private_ip", #keystone
     }
     
     firewall { '001 swift proxy incoming':

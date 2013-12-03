@@ -9,7 +9,7 @@ class trystack::swift_ringbuilder {
 
     # sets up an rsync db that can be used to sync the ring DB
     class { 'swift::ringserver':
-      local_net_ip => "10.100.0.2",
+      local_net_ip => "$private_ip",
     }
     
     @@swift::ringsync { ['account', 'object', 'container']:
