@@ -20,6 +20,7 @@ class trystack::compute::nova_ts() {
     nova_config{
         "DEFAULT/libvirt_inject_partition": value => "-1";
         "DEFAULT/volume_api_class": value => "nova.volume.cinder.API";
+        "DEFAULT/cinder_catalog_info": value => "volume:cinder:internalURL";
     }
     
     class {"nova::compute":
@@ -143,7 +144,7 @@ class trystack::compute::nova_ts() {
     class {"nova::network::neutron":
       neutron_admin_password => "$neutron_user_password",
       neutron_auth_strategy => "keystone",
-      neutron_url => "http://$private_ip:9696",
+      neutron_url => "http://$neutron_ip:9696",
       neutron_admin_tenant_name => "services",
       neutron_admin_auth_url => "http://$private_ip:35357/v2.0",
     }

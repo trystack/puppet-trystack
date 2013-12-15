@@ -51,9 +51,9 @@ class trystack::control::keystone_ts() {
     
     class {"neutron::keystone::auth":
         password          => "$neutron_user_password",
-        public_address    => "$public_ip",
-        admin_address     => "$private_ip",
-        internal_address  => "$private_ip",
+        public_address    => "8.21.28.4",
+        admin_address     => "$neutron_ip",
+        internal_address  => "$neutron_ip",
     }
     
     

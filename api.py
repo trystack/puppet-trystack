@@ -20,14 +20,15 @@
 
 ###################
 # To use this script:
-# 1. change the 0 to 1 on the line “if 0″ by the comment “# generate”
-# 2. run ‘python api.py’ this will generate a trystack.cfg file with empty values
+# 1. change the 0 to 1 on the line 'if 0' by the comment '# generate'
+# 2. run `python api.py` this will generate a trystack.cfg file with empty values
 # 3. switch the 1 back to a 0
 # 4. edit the trystack.cfg file with appropriate values
 # 5. edit the user and password and url around line 40 to point to foreman
-# 6. run ‘python api.py’
+# 6. run `python api.py`
 # 7. repeat 5 & 6 as nessesary
 ##################
+
 
 
 
@@ -46,7 +47,8 @@ defaults = {
 'trystack_db_password': '', 'horizon_secret_key': '',
 'facebook_app_id': '', 'facebook_app_secret': '',
 'member_user_role': '', 'neutron_user_password': '',
-'neutron_db_password': '', 'neutron_metadata_auth_password': '',
+'nagios_ip': '', 'nagios_password': '', 'nagios_user': '',
+'neutron_ip': '', 'neutron_db_password': '', 'neutron_metadata_auth_password': '',
 'neutron_metadata_shared_secret': '', 'keystone_admin_token': '',
 'keystone_db_password': '', 'swift_local_net_ip': '',
 'swift_admin_password': '', 'swift_shared_secret': '',
@@ -60,17 +62,25 @@ config = ConfigParser.SafeConfigParser(defaults)
 
 # generate
 if 0:
-    cfgfile = open("new.cfg", 'w')
+    cfgfile = open("trystack.cfg.new", 'w')
+    cfgfile.add_section('NAGIOS')
+    cfgfile.set('NAGIOS','user', 'admin')
+    cfgfile.set('NAGIOS','password', 'changeme')
     config.write(cfgfile)
     exit()
 
 
 config.read('trystack.cfg')
 
+nagios_creds = {
+    'user': config.get('NAGIOS', 'user'),
+    'password': config.get('NAGIOS', 'password'),
+}
+
 # Get common paramters
 h = httplib2.Http(".cache", disable_ssl_certificate_validation=True)
 #h.add_credentials('admin', 'changeme') ## Doesn't work, workaround on next line!
-auth = base64.encodestring( 'admin' + ':' + 'changeme' )
+auth = base64.encodestring('%s:%s' % (nagios_creds['user'], nagios_creds['password']))
 # /api/common_parameters seemed to be limiting results to max 20 paramters
 # I tried disabling this limit with page and per_page to no avail
 # hack fix is to pass a number large enough that there should never be more than

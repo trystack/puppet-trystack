@@ -7,13 +7,13 @@ class trystack::control::horizon_ts() {
 
     file {"/etc/httpd/conf.d/rootredirect.conf":
         ensure => present,
-        content => 'RedirectMatch ^/$ /dashboard/',
+        content => "RedirectMatch ^/$ https://$public_fqdn/dashboard/",
         notify => File["/etc/httpd/conf.d/openstack-dashboard.conf"],
     }
 
     class {'horizon':
        secret_key => "$horizon_secret_key",
-       keystone_host => "$::ipaddress_em1",
+       keystone_host => "$private_ip",
     }
 
     class {'memcached':}

@@ -18,11 +18,11 @@ class trystack::control::nova_ts() {
         "DEFAULT/ram_allocation_ratio":
             value => "1.5";
         "DEFAULT/quota_instances":
-            value => "2";
+            value => "3";
         "DEFAULT/quota_cores":
-            value => "4";
+            value => "6";
         "DEFAULT/quota_ram":
-            value => "8192";
+            value => "12288";
         "DEFAULT/quota_floating_ips":
             value => "4";
     }
@@ -53,12 +53,12 @@ class trystack::control::nova_ts() {
     
     nova_config{
         "DEFAULT/metadata_host": value => "$::ipaddress_em1";
-        "DEFAULT/sql_connection": value => "mysql://nova:$nova_db_password@$::ipaddress_em1/nova";
+        "DEFAULT/sql_connection": value => "mysql://nova:$nova_db_password@$private_ip/nova";
     }
     
     class {"nova":
-        glance_api_servers => "${::ipaddress_em1}:9292",
-        qpid_hostname => "$::ipaddress_em1",
+        glance_api_servers => "${private_ip}:9292",
+        qpid_hostname => "$private_ip",
         rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
         verbose     => true,
         debug       => false,
@@ -68,7 +68,7 @@ class trystack::control::nova_ts() {
     class {"nova::network::neutron":
       neutron_admin_password => "$neutron_user_password",
       neutron_auth_strategy => "keystone",
-      neutron_url => "http://${::ipaddress_em1}:9696",
+      neutron_url => "http://${neutron_ip}:9696",
       neutron_admin_tenant_name => "services",
       neutron_admin_auth_url => "http://${::ipaddress_em1}:35357/v2.0",
     }
@@ -83,7 +83,7 @@ class trystack::control::nova_ts() {
     require 'keystone::python'
     class {"nova::api":
         enabled => true,
-        auth_host => "$::ipaddress_em1",
+        auth_host => "$private_ip",
         admin_password => "$nova_user_password",
         neutron_metadata_proxy_shared_secret => "$neutron_metadata_shared_secret"
     }

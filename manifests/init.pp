@@ -12,10 +12,6 @@ class trystack(){
         source => 'puppet:///modules/trystack/ssh_authorized_keys',
   }
 
-  package{ ['openstack-selinux', 'glusterfs-fuse']:
-      ensure => present,
-  }
-
   file_line { 'puppet_report_on':
     path    => '/etc/puppet/puppet.conf',
     match   => '^[ ]*report[ ]*=',
@@ -27,4 +23,5 @@ class trystack(){
   #  match   => '^[ ]*pluginsync=',
   #  line    => "    pluginsync=true",
   #}
+
 }

@@ -1,0 +1,13 @@
+#!/bin/bash
+# Nagios plugin to monitor Puppet agent state
+
+data=$(/sbin/service puppet status)
+rv=$?
+
+if [ "$rv" != "0" ] ; then
+    echo $data
+    exit 2
+fi
+
+echo "$data" # | grep -v -e "^ID " -e "---------------" | wc -l
+
