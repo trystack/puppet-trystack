@@ -1,0 +1,18 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+10.100.0.1 host1.trystack.org host1
+10.100.0.2 host2.trystack.org host2
+10.100.0.3 host3.trystack.org host3
+10.100.0.4 host4.trystack.org host4
+10.100.0.5 host5.trystack.org host5
+10.100.0.6 host6.trystack.org host6
+10.100.0.7 host7.trystack.org host7
+10.100.0.8 host8.trystack.org host8
+10.100.0.9 host9.trystack.org host9
+10.100.0.10 host10.trystack.org host10
+10.100.0.11 host11.trystack.org host11
+10.100.0.12 host12.trystack.org host12
+10.100.0.13 host13.trystack.org host13
+10.100.0.14 host14.trystack.org host14
+10.100.0.15 host15.trystack.org host15
+10.100.0.16 host16.trystack.org host16

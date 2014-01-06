@@ -4,7 +4,6 @@ class trystack::control::nova_ts() {
         enabled => true,
     }
     
-    
     class {"nova::conductor":
         enabled => true,
     }
@@ -13,18 +12,14 @@ class trystack::control::nova_ts() {
         # OpenStack doesn't include the CoreFilter (= CPU Filter) by default
         "DEFAULT/scheduler_default_filters":
             value => "RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,CoreFilter";
-        "DEFAULT/cpu_allocation_ratio":
-            value => "16.0";
-        "DEFAULT/ram_allocation_ratio":
-            value => "1.5";
-        "DEFAULT/quota_instances":
-            value => "3";
-        "DEFAULT/quota_cores":
-            value => "6";
-        "DEFAULT/quota_ram":
-            value => "12288";
-        "DEFAULT/quota_floating_ips":
-            value => "4";
+        "DEFAULT/cpu_allocation_ratio": value => "16.0";
+        "DEFAULT/ram_allocation_ratio": value => "1.5";
+        "DEFAULT/quota_instances": value => "3";
+        "DEFAULT/quota_cores": value => "6";
+        "DEFAULT/quota_ram": value => "12288";
+        "DEFAULT/quota_floating_ips": value => "4";
+        "DEFAULT/metadata_host": value => "$::ipaddress_em1";
+        "DEFAULT/sql_connection": value => "mysql://nova:$nova_db_password@$private_ip/nova";
     }
     
     class {"nova::scheduler":
@@ -35,9 +30,9 @@ class trystack::control::nova_ts() {
         enabled => true,
     }
     
-    class {"nova::consoleauth":
-        enabled => true,
-    }
+    #class {"nova::consoleauth":
+    #    enabled => true,
+    #}
     
     firewall { '001 novncproxy incoming':
         proto    => 'tcp',
@@ -50,11 +45,6 @@ class trystack::control::nova_ts() {
     # Ensure Firewall changes happen before nova services start
     # preventing a clash with rules being set by nova-compute and nova-network
     Firewall <| |> -> Class['nova']
-    
-    nova_config{
-        "DEFAULT/metadata_host": value => "$::ipaddress_em1";
-        "DEFAULT/sql_connection": value => "mysql://nova:$nova_db_password@$private_ip/nova";
-    }
     
     class {"nova":
         glance_api_servers => "${private_ip}:9292",
@@ -82,6 +72,8 @@ class trystack::control::nova_ts() {
 #### Start nova api ####
     require 'keystone::python'
     class {"nova::api":
+        api_bind_address => $::ipaddress_em1,
+        metadata_listen => $::ipaddress_em1,
         enabled => true,
         auth_host => "$private_ip",
         admin_password => "$nova_user_password",

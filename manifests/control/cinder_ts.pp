@@ -8,15 +8,17 @@ class trystack::control::cinder_ts() {
   }
   
   cinder_config {
+      'DEFAULT/notification_driver': value => 'cinder.openstack.common.notifier.rpc_notifier';
       "DEFAULT/glance_host": value => "$private_ip";
       "DEFAULT/secure_delete": value => "false";
       "DEFAULT/quota_gigabytes": value => "3";
       "DEFAULT/quota_volumes": value => "3";
       #"DEFAULT/glusterfs_sparsed_volumes": value => "true";
-      #"DEFAULT/glusterfs_qcow2_volumes": value => "true";
+      "DEFAULT/glusterfs_qcow2_volumes": value => "true";
   }
   
   class {'cinder::api':
+      bind_host => $::ipaddress_em1,
       keystone_password => "$cinder_user_password",
       keystone_tenant => "services",
       keystone_user => "cinder",
@@ -29,14 +31,14 @@ class trystack::control::cinder_ts() {
   class {'cinder::volume':
   }
   
-  class {'cinder::volume::iscsi':
-      iscsi_ip_address => "$private_ip",
-  }
-
-  #class { 'cinder::volume::glusterfs':
-  #    glusterfs_shares => [$gluster_shares],
-  #    require => Package['glusterfs-fuse'],
+  #class {'cinder::volume::iscsi':
+  #    iscsi_ip_address => "$private_ip",
   #}
+
+  class { 'cinder::volume::glusterfs':
+      glusterfs_shares => [$gluster_shares],
+      require => Package['glusterfs-fuse'],
+  }
 
   
   firewall { '001 cinder incoming':
@@ -45,7 +47,4 @@ class trystack::control::cinder_ts() {
       action   => 'accept',
   }
   
-  cinder_config{
-      'DEFAULT/notification_driver': value => 'cinder.openstack.common.notifier.rpc_notifier'
-  }
 }

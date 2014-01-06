@@ -1,0 +1,11 @@
+#!/bin/bash
+# Nagios plugin to monitor nic em2
+
+
+if /sbin/ip a show em2 | /usr/bin/wc -l | /bin/grep 2 > /dev/null; then
+    echo 'em2 is down'
+    exit 0
+else
+    echo 'em2 is up'
+    exit 2
+fi

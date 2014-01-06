@@ -72,27 +72,27 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
-    nagios_service { 'load5-10.100.0.2':
-          check_command	        => 'check_nrpe!load5',
-          host_name             => '10.100.0.2',
-          normal_check_interval	=> 5,
-          service_description   => '5 minute load average',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'df_var-10.100.0.2':
-          check_command	        => 'check_nrpe!df_var',
-          host_name             => '10.100.0.2',
-          service_description   => 'Percent disk space used on /var',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_puppet_agent-10.100.0.2':
-          check_command	        => 'check_nrpe!check_puppet_agent',
-          host_name             => '10.100.0.2',
-          service_description   => 'Puppet agent status',
-          use	                => 'generic-service',
-    }
+#    nagios_service { 'load5-10.100.0.2':
+#          check_command	        => 'check_nrpe!load5',
+#          host_name             => '10.100.0.2',
+#          normal_check_interval	=> 5,
+#          service_description   => '5 minute load average',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'df_var-10.100.0.2':
+#          check_command	        => 'check_nrpe!df_var',
+#          host_name             => '10.100.0.2',
+#          service_description   => 'Percent disk space used on /var',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_puppet_agent-10.100.0.2':
+#          check_command	        => 'check_nrpe!check_puppet_agent',
+#          host_name             => '10.100.0.2',
+#          service_description   => 'Puppet agent status',
+#          use	                => 'generic-service',
+#    }
 
     nagios_service {'load5-10.100.0.3':
           check_command	        => 'check_nrpe!load5',
@@ -400,6 +400,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_gluster-10.100.0.13':
+          check_command	        => 'check_nrpe!check_glusterfs',
+          host_name             => '10.100.0.13',
+          service_description   => 'Gluster Server Health Check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_em2_down-10.100.0.13':
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.13',
@@ -426,6 +433,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_puppet_agent',
           host_name             => '10.100.0.14',
           service_description   => 'Puppet agent status',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster-10.100.0.14':
+          check_command	        => 'check_nrpe!check_glusterfs',
+          host_name             => '10.100.0.14',
+          service_description   => 'Gluster Server Health Check',
           use	                => 'generic-service',
     }
 
@@ -458,10 +472,46 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_gluster-10.100.0.15':
+          check_command	        => 'check_nrpe!check_glusterfs',
+          host_name             => '10.100.0.15',
+          service_description   => 'Gluster Server Health Check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_em2_down-10.100.0.15':
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.15',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service {'load5-10.100.0.16':
+          check_command	        => 'check_nrpe!load5',
+          host_name             => '10.100.0.16',
+          normal_check_interval	=> 5,
+          service_description   => '5 minute load average',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'df_var-10.100.0.16':
+          check_command	        => 'check_nrpe!df_var',
+          host_name             => '10.100.0.16',
+          service_description   => 'Percent disk space used on /var',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_puppet_agent-10.100.0.16':
+          check_command	        => 'check_nrpe!check_puppet_agent',
+          host_name             => '10.100.0.16',
+          service_description   => 'Puppet agent status',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_mnt_trystack-10.100.0.16':
+          check_command	        => 'check_nrpe!check_mnt_trystack',
+          host_name             => '10.100.0.16',
+          service_description   => 'Glance gluster mount',
           use	                => 'generic-service',
     }
 

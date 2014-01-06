@@ -2,6 +2,10 @@
 
 class trystack(){
   require ntp
+  file {"/etc/hosts":
+        ensure => present,
+        source => 'puppet:///modules/trystack/hosts',
+  }
   file {"/root/.ssh/":
         ensure => directory,
         mode   => 700,

@@ -1,6 +1,7 @@
 class trystack::control::glance() {
 
     class {"glance::api":
+        bind_host => $::ipaddress_em1,
         auth_host => "$private_ip",
         keystone_tenant => "services",
         keystone_user => "glance",
@@ -12,6 +13,7 @@ class trystack::control::glance() {
     class { 'glance::backend::file': }
     
     class {"glance::registry":
+        bind_host => $::ipaddress_em1,
         auth_host => "$private_ip",
         keystone_tenant => "services",
         keystone_user => "glance",

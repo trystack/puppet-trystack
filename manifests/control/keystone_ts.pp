@@ -3,6 +3,7 @@ class trystack::control::keystone_ts() {
         admin_token => "$keystone_admin_token",
         sql_connection => "mysql://keystone_admin:$keystone_db_password@$private_ip/keystone",
         token_format => "PKI",
+        bind_host => $::ipaddress_em1,
     }
     
     class {"keystone::roles::admin":

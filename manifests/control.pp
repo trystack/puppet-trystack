@@ -31,6 +31,6 @@ class trystack::control() {
         require => [Service["mysqld"], Service['qpidd'],
                     Class["trystack::control::keystone_ts"]]
     }
-
+    class { "trystack::swift::proxy_ts": }
 }
 

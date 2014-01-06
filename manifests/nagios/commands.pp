@@ -37,7 +37,7 @@ class trystack::nagios::commands {
         mode => 755,
         owner => "nagios",
         seltype => "nagios_unconfined_plugin_exec_t",
-        content => template("packstack/nova-list.erb"),
+        source => "puppet:///modules/trystack/nova-list",
     }
 
     nagios_command {"nova-list":

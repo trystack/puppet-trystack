@@ -1,0 +1,32 @@
+#!/bin/env bash
+
+. /etc/nagios/keystonerc_admin
+
+
+critical=80
+warning=70
+
+data=$(nova list --all-tenants  2>&1)
+rv=$?
+count=`echo "$data" | grep -v -e '--------' -e '| Status |' -e '^$' | wc -l`
+
+if [ "$rv" != "0" ] ; then
+    echo "CRITICAL: $data"
+    exit $rv
+elif [[ $count -gt $critical ]] ; then
+    echo "CRITICAL: $count"
+    exit 2
+elif [[ $count -gt $warning ]] ; then
+    echo "WARNING: $count"
+    exit 1
+fi
+
+
+task_state=`echo "$data" | grep -e 'rebooting' -e 'deleting' -e 'powering-off' | wc -l`
+task_state_perc=`bc -l <<< "$task_state/$count"*100`
+if [[ ${task_state_perc%.*} -gt 20 ]] ; then
+    echo "WARNING: Non-None Task State ${task_state_perc%.*}%"
+    exit 1
+fi
+
+echo "OK: $count"

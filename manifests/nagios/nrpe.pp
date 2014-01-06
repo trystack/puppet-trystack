@@ -45,15 +45,30 @@ class trystack::nagios::nrpe {
         file_line{'check_em2_down':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_em2_down\]=",
-            line => "command[check_em2_down]=if /sbin/ip a show em2 | /usr/bin/wc -l | /bin/grep 2 > /dev/null; then echo 'em2 is down'; $(exit 0); else echo 'em2 is up'; $(exit 2); fi",
+            line => "command[check_em2_down]=/usr/lib64/nagios/plugins/check_em2_down",
         }
 
         # make sure glance storage is mounted
         file_line{'check_mnt_trystack':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_mnt_trystack\]=",
-            line => "command[check_mnt_trystack]=/bin/mount | /bin/grep '/mnt/trystack'",
+            line => "command[check_mnt_trystack]=/usr/lib64/nagios/plugins/check_mnt_trystack",
         }
+
+        # delete the old gluster check
+        file_line{'check_gluster':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_gluster\]=",
+            line => "command[check_gluster]=/usr/lib64/nagios/plugins/check_gluster",
+            ensure => 'absent',
+        }
+
+        file_line{'check_glusterfs':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_glusterfs\]=",
+            line => "command[check_glusterfs]=/usr/lib64/nagios/plugins/check_glusterfs -v trystack -n 3",
+        }
+
     }
 
     file{"/usr/lib64/nagios/plugins/check_puppet_agent.rb":
@@ -65,6 +80,46 @@ class trystack::nagios::nrpe {
         owner => "nrpe",
         seltype => "nagios_unconfined_plugin_exec_t",
         source => "puppet:///modules/trystack/check_puppet_agent",
+    }
+
+    file{"/usr/lib64/nagios/plugins/check_em2_down":
+        mode => 755,
+        owner => "nrpe",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/check_em2_down",
+    }
+
+    file{"/usr/lib64/nagios/plugins/check_mnt_trystack":
+        mode => 755,
+        owner => "nrpe",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/check_mnt_trystack",
+    }
+
+    file{"/usr/lib64/nagios/plugins/check_gluster":
+        ensure => 'absent',
+    }
+
+    package { ['bc', 'nagios-plugins']:
+        ensure => 'present',
+    }
+        
+    file{"/usr/lib64/nagios/plugins/check_glusterfs":
+        mode => 755,
+        owner => "nagios",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/check_glusterfs",
+        require => [Package['bc'], Package['nagios-plugins']],
+    }
+
+    file{"/etc/sudoers.d/nagios":
+        ensure => 'absent',
+    }
+
+    file{"/etc/sudoers.d/nrpe":
+        mode => 440,
+        owner => "root",
+        source => "puppet:///modules/trystack/sudoers.d_nrpe",
     }
 
     class{'nagios_configs':
@@ -84,4 +139,5 @@ class trystack::nagios::nrpe {
         iniface  => 'em1',
         action   => 'accept',
     }
+
 }
