@@ -1,2 +1,2 @@
 Defaults:nrpe !requiretty
-nrpe ALL=(root) NOPASSWD:/usr/sbin/gluster volume status [[\:graph\:]]* detail,/usr/sbin/gluster volume heal [[\:graph\:]]* info
+nrpe ALL=(root) NOPASSWD:/usr/sbin/gluster volume status [[\:graph\:]]* detail,/usr/sbin/gluster volume heal [[\:graph\:]]* info,/sbin/service [[\:graph\:]]* status

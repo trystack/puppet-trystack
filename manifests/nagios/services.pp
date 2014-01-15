@@ -123,6 +123,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_swift_proxy-10.100.0.3':
+          check_command	        => 'check_nrpe!check_swift_proxy',
+          host_name             => '10.100.0.3',
+          service_description   => 'Swift Proxy service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-10.100.0.4':
           check_command	        => 'check_nrpe!load5',
           host_name             => '10.100.0.4',
@@ -142,6 +149,48 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_puppet_agent',
           host_name             => '10.100.0.4',
           service_description   => 'Puppet agent status',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_server-10.100.0.4':
+          check_command	        => 'check_nrpe!check_neutron_server',
+          host_name             => '10.100.0.4',
+          service_description   => 'Neutron Server service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.4':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.4',
+          service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_dhcp_agent-10.100.0.4':
+          check_command	        => 'check_nrpe!check_neutron_dhcp_agent',
+          host_name             => '10.100.0.4',
+          service_description   => 'Neutron DHCP agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_l3_agent-10.100.0.4':
+          check_command	        => 'check_nrpe!check_neutron_l3_agent',
+          host_name             => '10.100.0.4',
+          service_description   => 'Neutron L3 Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_cleanup-10.100.0.4':
+          check_command	        => 'check_nrpe!check_neutron_ovs_cleanup',
+          host_name             => '10.100.0.4',
+          service_description   => 'Neutron OVS Cleanup service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_metadata_agent-10.100.0.4':
+          check_command	        => 'check_nrpe!check_neutron_metadata_agent',
+          host_name             => '10.100.0.4',
+          service_description   => 'Neutron Metadata Agent service check',
           use	                => 'generic-service',
     }
 
@@ -167,11 +216,24 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
-
     nagios_service { 'check_em2_down-10.100.0.5':
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.5',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.5':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.5',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.5':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.5',
+	  service_description   => 'Neutron OVS Agent service check',
           use	                => 'generic-service',
     }
 
@@ -204,6 +266,20 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_nova_compute-10.100.0.6':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.6',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.6':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.6',
+	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-10.100.0.7':
           check_command	        => 'check_nrpe!load5',
           host_name             => '10.100.0.7',
@@ -230,6 +306,20 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.7',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.7':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.7',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.7':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.7',
+	  service_description   => 'Neutron OVS Agent service check',
           use	                => 'generic-service',
     }
 
@@ -262,6 +352,20 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_nova_compute-10.100.0.8':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.8',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.8':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.8',
+	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-10.100.0.9':
           check_command	        => 'check_nrpe!load5',
           host_name             => '10.100.0.9',
@@ -288,6 +392,20 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.9',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.9':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.9',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.9':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.9',
+	  service_description   => 'Neutron OVS Agent service check',
           use	                => 'generic-service',
     }
 
@@ -320,6 +438,20 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_nova_compute-10.100.0.10':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.10',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.10':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.10',
+	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-10.100.0.11':
           check_command	        => 'check_nrpe!load5',
           host_name             => '10.100.0.11',
@@ -349,6 +481,20 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_nova_compute-10.100.0.11':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.11',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.11':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.11',
+	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-10.100.0.12':
           check_command	        => 'check_nrpe!load5',
           host_name             => '10.100.0.12',
@@ -375,6 +521,20 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.12',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.12':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.12',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.12':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.12',
+	  service_description   => 'Neutron OVS Agent service check',
           use	                => 'generic-service',
     }
 
@@ -512,6 +672,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_mnt_trystack',
           host_name             => '10.100.0.16',
           service_description   => 'Glance gluster mount',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_swift_proxy-10.100.0.16':
+          check_command	        => 'check_nrpe!check_swift_proxy',
+          host_name             => '10.100.0.16',
+          service_description   => 'Swift Proxy service check',
           use	                => 'generic-service',
     }
 

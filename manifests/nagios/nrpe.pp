@@ -55,24 +55,60 @@ class trystack::nagios::nrpe {
             line => "command[check_mnt_trystack]=/usr/lib64/nagios/plugins/check_mnt_trystack",
         }
 
-        # delete the old gluster check
-        file_line{'check_gluster':
-            path => '/etc/nagios/nrpe.cfg',
-            match => "command\[check_gluster\]=",
-            line => "command[check_gluster]=/usr/lib64/nagios/plugins/check_gluster",
-            ensure => 'absent',
-        }
-
         file_line{'check_glusterfs':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_glusterfs\]=",
             line => "command[check_glusterfs]=/usr/lib64/nagios/plugins/check_glusterfs -v trystack -n 3",
         }
 
-    }
+        file_line{'check_neutron_dhcp_agent':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_neutron_dhcp_agent\]=",
+            line => "command[check_neutron_dhcp_agent]=/usr/lib64/nagios/plugins/check_service neutron-dhcp-agent",
+        }
 
-    file{"/usr/lib64/nagios/plugins/check_puppet_agent.rb":
-        ensure => 'absent',
+        file_line{'check_neutron_server':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_neutron_server\]=",
+            line => "command[check_neutron_server]=/usr/lib64/nagios/plugins/check_service neutron-server",
+        }
+
+        file_line{'check_neutron_l3_agent':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_neutron_l3_agent\]=",
+            line => "command[check_neutron_l3_agent]=/usr/lib64/nagios/plugins/check_service neutron-l3-agent",
+        }
+
+        file_line{'check_neutron_metadata_agent':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_neutron_metadata_agent\]=",
+            line => "command[check_neutron_metadata_agent]=/usr/lib64/nagios/plugins/check_service neutron-metadata-agent",
+        }
+
+        file_line{'check_neutron_ovs_cleanup':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_neutron_ovs_cleanup\]=",
+            line => "command[check_neutron_ovs_cleanup]=/usr/lib64/nagios/plugins/check_service neutron-ovs-cleanup",
+        }
+
+        file_line{'check_swift_proxy':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_swift_proxy\]=",
+            line => "command[check_swift_proxy]=/usr/lib64/nagios/plugins/check_service openstack-swift-proxy",
+        }
+
+        file_line{'check_nova_compute':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_nova_compute\]=",
+            line => "command[check_nova_compute]=/usr/lib64/nagios/plugins/check_service openstack-nova-compute",
+        }
+
+        file_line{'check_neutron_ovs_agent':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_neutron_ovs_agent\]=",
+            line => "command[check_neutron_ovs_agent]=/usr/lib64/nagios/plugins/check_service neutron-openvswitch-agent",
+        }
+
     }
 
     file{"/usr/lib64/nagios/plugins/check_puppet_agent":
@@ -96,14 +132,17 @@ class trystack::nagios::nrpe {
         source => "puppet:///modules/trystack/check_mnt_trystack",
     }
 
-    file{"/usr/lib64/nagios/plugins/check_gluster":
-        ensure => 'absent',
-    }
-
     package { ['bc', 'nagios-plugins']:
         ensure => 'present',
     }
         
+    file{"/usr/lib64/nagios/plugins/check_service":
+        mode => 755,
+        owner => "nagios",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/check_service",
+    }
+
     file{"/usr/lib64/nagios/plugins/check_glusterfs":
         mode => 755,
         owner => "nagios",

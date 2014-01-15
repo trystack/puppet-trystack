@@ -19,7 +19,8 @@ class trystack::control::nova_ts() {
         "DEFAULT/quota_ram": value => "12288";
         "DEFAULT/quota_floating_ips": value => "4";
         "DEFAULT/metadata_host": value => "$::ipaddress_em1";
-        "DEFAULT/sql_connection": value => "mysql://nova:$nova_db_password@$private_ip/nova";
+        "DEFAULT/sql_connection": value => "mysql://nova:$nova_db_password@$mysql_ip/nova";
+        "DEFAULT/keystone_ec2_url": value => "http://$private_ip:5000/v2.0/ec2tokens";
     }
     
     class {"nova::scheduler":
@@ -31,7 +32,8 @@ class trystack::control::nova_ts() {
     }
     
     #class {"nova::consoleauth":
-    #    enabled => true,
+    #    # We want pacemaker to manage this service's state
+    #    enabled => false,
     #}
     
     firewall { '001 novncproxy incoming':
@@ -48,7 +50,7 @@ class trystack::control::nova_ts() {
     
     class {"nova":
         glance_api_servers => "${private_ip}:9292",
-        qpid_hostname => "$private_ip",
+        qpid_hostname => "$qpid_ip",
         rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
         verbose     => true,
         debug       => false,
@@ -60,7 +62,7 @@ class trystack::control::nova_ts() {
       neutron_auth_strategy => "keystone",
       neutron_url => "http://${neutron_ip}:9696",
       neutron_admin_tenant_name => "services",
-      neutron_admin_auth_url => "http://${::ipaddress_em1}:35357/v2.0",
+      neutron_admin_auth_url => "http://${private_ip}:35357/v2.0",
     }
     
     class {"nova::compute::neutron":

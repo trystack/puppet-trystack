@@ -40,8 +40,8 @@ import httplib2
 from urllib import urlencode
 
 defaults = {
-'public_ip': '', 'private_ip': '',
-'public_fqdn': '', 'admin_user': '',
+'public_ip': '', 'private_ip': '', 'mysql_ip': '',
+'qpid_ip': '', 'public_fqdn': '', 'admin_user': '',
 'admin_tenant': '', 'admin_email': '',
 'admin_password': '', 'mysql_root_password': '',
 'trystack_db_password': '', 'horizon_secret_key': '',
@@ -50,7 +50,7 @@ defaults = {
 'nagios_ip': '', 'nagios_password': '', 'nagios_user': '',
 'neutron_ip': '', 'neutron_db_password': '', 'neutron_metadata_auth_password': '',
 'neutron_metadata_shared_secret': '', 'keystone_admin_token': '',
-'keystone_db_password': '', 'swift_local_net_ip': '',
+'keystone_db_password': '',
 'swift_admin_password': '', 'swift_shared_secret': '',
 'ceilometer_metering_secret': '', 'ceilometer_user_password': '',
 'cinder_user_password': '', 'cinder_db_password': '',

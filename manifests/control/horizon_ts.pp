@@ -1,7 +1,6 @@
 class trystack::control::horizon_ts() {
 
-    package {"horizon-packages":
-        name => ["python-memcached", "python-netaddr"],
+    package { ["python-memcached", "python-netaddr"]:
         notify => Class["horizon"],
     }
 

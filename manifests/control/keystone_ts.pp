@@ -1,7 +1,7 @@
 class trystack::control::keystone_ts() {
     class {"keystone":
         admin_token => "$keystone_admin_token",
-        sql_connection => "mysql://keystone_admin:$keystone_db_password@$private_ip/keystone",
+        sql_connection => "mysql://keystone_admin:$keystone_db_password@$mysql_ip/keystone",
         token_format => "PKI",
         bind_host => $::ipaddress_em1,
     }

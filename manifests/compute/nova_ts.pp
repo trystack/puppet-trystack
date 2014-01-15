@@ -103,15 +103,15 @@ class trystack::compute::nova_ts() {
     
     class { 'ceilometer':
         metering_secret => "$ceilometer_metering_secret",
-        qpid_hostname   => "$private_ip",
+        qpid_hostname   => "$qpid_ip",
         rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',
         verbose         => true,
         debug           => false,
     }
     
     class { 'ceilometer::agent::compute':
-        auth_url      => "http://$private_ip:35357/v2.0",
-        auth_password => "$ceilometer_user_password",
+        #auth_url      => "http://$private_ip:35357/v2.0",
+        #auth_password => "$ceilometer_user_password",
     }
     
     # if fqdn is not set correctly we have to tell compute agent which host it should query
@@ -129,12 +129,12 @@ class trystack::compute::nova_ts() {
     
     nova_config{
         "DEFAULT/metadata_host": value => "$private_ip";
-        "DEFAULT/sql_connection": value => "mysql://nova@$private_ip/nova";
+        "DEFAULT/sql_connection": value => "mysql://nova@$mysql_ip/nova";
     }
     
     class {"nova":
         glance_api_servers => "$private_ip:9292",
-        qpid_hostname => "$private_ip",
+        qpid_hostname => "$qpid_ip",
         rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
         verbose     => true,
         debug       => false,

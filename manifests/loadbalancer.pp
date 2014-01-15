@@ -1,6 +1,18 @@
 class trystack::loadbalancer {
 
-    class { 'haproxy': }
+    class { 'haproxy': 
+        # We want pacemaker to manage this service's state
+        # not puppet
+        manage_service => false,
+    }
+
+    haproxy::listen { "admin":
+        mode => 'http',
+        ipaddress => '*',
+        ports => [8081],
+        options => { 'stats' => 'enable', },
+    }
+
     haproxy::frontend { 'keystone-frontend':
         ipaddress => [$private_ip, $public_ip],
         ports     => '5000',
@@ -118,6 +130,21 @@ class trystack::loadbalancer {
                      'mode'    => 'http',
                      'server'  => ['host3 10.100.0.3:8776 check inter 10s',
                                    'host16 10.100.0.16:8776 check inter 10s',]
+        }
+    }
+
+    haproxy::frontend { 'swift-frontend':
+        ipaddress => [$private_ip, $public_ip],
+        ports     => '8080',
+        options   => { 'default_backend' => 'swift-backend', },
+        mode      => 'http',
+    }
+
+    haproxy::backend { 'swift-backend':
+        options => { 'balance' => 'roundrobin',
+                     'mode'    => 'http',
+                     'server'  => ['host3 10.100.0.3:8080 check inter 10s',
+                                   'host16 10.100.0.16:8080 check inter 10s',]
         }
     }
 

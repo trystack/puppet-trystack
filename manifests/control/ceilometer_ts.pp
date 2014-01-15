@@ -25,7 +25,7 @@ class trystack::control::ceilometer_ts() {
     
     class { 'ceilometer':
         metering_secret => "$ceilometer_metering_secret",
-        qpid_hostname   => "$::ipaddress",
+        qpid_hostname   => "$qpid_ip",
         rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',
         verbose         => true,
         debug           => false,
@@ -41,8 +41,8 @@ class trystack::control::ceilometer_ts() {
     }
     
     class { 'ceilometer::agent::central':
-        auth_url      => "http://${::ipaddress}:35357/v2.0",
-        auth_password => "$ceilometer_user_password",
+        #auth_url      => "http://${::ipaddress}:35357/v2.0",
+        #auth_password => "$ceilometer_user_password",
     }
     
     class { 'ceilometer::api':

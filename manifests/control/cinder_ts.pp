@@ -1,9 +1,9 @@
 class trystack::control::cinder_ts() {
 
   class {'cinder':
-      sql_connection => "mysql://cinder:$cinder_db_password@$private_ip/cinder",
+      sql_connection => "mysql://cinder:$cinder_db_password@$mysql_ip/cinder",
       rpc_backend    => 'cinder.openstack.common.rpc.impl_qpid',
-      qpid_hostname  => "$private_ip",
+      qpid_hostname  => "$qpid_ip",
       qpid_password  => "notused",
   }
   

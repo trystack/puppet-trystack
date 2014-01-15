@@ -1,8 +1,11 @@
 class trystack::control::mysql() {
 
+    # pacemaker will manage the service.
     class {"mysql::server":
+        manage_service => false,
         config_hash => {bind_address => "0.0.0.0",
-                        root_password => "$mysql_root_password",}
+                        root_password => "$mysql_root_password",
+                        datadir => '/var/lib/mysql/data', }
     }
     
     # deleting database users for security
