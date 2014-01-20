@@ -1,8 +1,10 @@
 class trystack::control::qpid () {
 
+    # pacemaker will manage this service
+    # so we disable puppet's managment of it
     class {"qpid::server":
         auth => "no",
-        clustered => false,
+        manage_service => false,
     }
     
     firewall { '001 qpid incoming':

@@ -29,7 +29,7 @@ class trystack::loadbalancer {
     }
 
     haproxy::frontend { 'keystone-admin-frontend':
-        ipaddress => [$private_ip, $public_ip],
+        ipaddress => [$private_ip],
         ports     => '35357',
         options   => { 'default_backend' => 'keystone-admin-backend', },
         mode      => 'http',

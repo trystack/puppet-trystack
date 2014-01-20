@@ -51,6 +51,7 @@ class trystack::highavailability {
     pacemaker::resource::mysql {'mysqld':
         name => 'mysqld',
         group => 'trystack_mysql',
+        additional_params => 'datadir="/var/lib/mysql/data',
         require => [Pacemaker::Resource::Filesystem['mysql_storage'],
                     Pacemaker::Resource::Ip['ip-10.100.0.221'],],
     }
