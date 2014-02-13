@@ -5,7 +5,7 @@ class trystack::control::mysql() {
         manage_service => false,
         config_hash => {bind_address => "0.0.0.0",
                         root_password => "$mysql_root_password",
-                        datadir => '/var/lib/mysql/data', }
+                        datadir => '/var/lib/mysql/', }
     }
     
     # deleting database users for security
@@ -34,6 +34,7 @@ class trystack::control::mysql() {
     class {"keystone::db::mysql":
         password      => "$keystone_db_password",
         allowed_hosts => "%",
+        host          => $mysql_ip,
     }
     
     class {"nova::db::mysql":
@@ -60,7 +61,7 @@ class trystack::control::mysql() {
     mysql::db { "trystack":
         user         => "trystack",
         password     => $trystack_db_password,
-        host         => '127.0.0.1',
+        host         => $mysql_ip,
         charset      => 'latin1',
         require      => Class['mysql::config'],
     }

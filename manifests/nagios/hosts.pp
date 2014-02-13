@@ -18,5 +18,7 @@ class trystack::nagios::hosts {
     nagios_host { '10.100.0.14': , use => 'linux-server', address => '10.100.0.14'}
     nagios_host { '10.100.0.15': , use => 'linux-server', address => '10.100.0.15'}
     nagios_host { '10.100.0.16': , use => 'linux-server', address => '10.100.0.16'}
+    nagios_host { '10.100.0.17': , use => 'linux-server', address => '10.100.0.17'}
+    nagios_host { '10.100.0.18': , use => 'linux-server', address => '10.100.0.18'}
 
 }

@@ -1,0 +1,20 @@
+#!/bin/env bash
+
+. /etc/nagios/keystonerc_admin
+
+data=$(neutron port-list | grep 8.21.28 2>&1)
+rv=$?
+count=`echo "$data" | grep -v -e "^ID " -e "---------------" | wc -l`
+
+if [ "$rv" != "0" ] ; then
+    echo $data
+    exit $rv
+elif [ $count -gt 180 ]
+then
+    exit 1
+elif [ $count -gt 190 ]
+then
+    exit 2
+fi
+
+echo $count

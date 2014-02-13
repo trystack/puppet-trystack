@@ -31,10 +31,11 @@ class trystack::control::nova_ts() {
         enabled => true,
     }
     
-    #class {"nova::consoleauth":
-    #    # We want pacemaker to manage this service's state
-    #    enabled => false,
-    #}
+    # we want pacemaker to control this so
+    # remove the service name so that puppet
+    # doesn't manage it
+    $consoleauth_service_name = ''
+    class {"nova::consoleauth": }
     
     firewall { '001 novncproxy incoming':
         proto    => 'tcp',

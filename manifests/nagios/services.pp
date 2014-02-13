@@ -1,7 +1,7 @@
 class trystack::nagios::services {
 
     nagios_service {'dashboard-login-page':
-          check_command	        => 'check_http!-S -H x86.trystack.org -u http://x68.trystack.org/dashboard/',
+          check_command	        => 'check_http!-S -H x86.trystack.org -u https://x86.trystack.org/dashboard/',
           host_name             => "$public_fqdn",
           normal_check_interval	=> 5,
           service_description   => 'load dashboard login',
@@ -40,11 +40,11 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
-    nagios_service {'neutron-floatingip-list':
-          check_command	        => 'neutron-floatingip-list',
+    nagios_service {'neutron-external-port-count':
+          check_command	        => 'neutron-external-port-count',
           host_name             => "$neutron_ip",
           normal_check_interval	=> 5,
-          service_description   => 'number of neutron floatingips',
+          service_description   => 'number of neutron ports on the external network in use',
           use	                => 'generic-service',
     }
 
@@ -69,6 +69,13 @@ class trystack::nagios::services {
 
           host_name             => '10.100.0.1',
           service_description   => 'Puppet agent status',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'df_var-10.100.0.1':
+          check_command	        => 'check_nrpe!df_var',
+          host_name             => '10.100.0.1',
+          service_description   => 'Percent disk space used on /var',
           use	                => 'generic-service',
     }
 
@@ -191,6 +198,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_metadata_agent',
           host_name             => '10.100.0.4',
           service_description   => 'Neutron Metadata Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gre_tunnels_exist-10.100.0.4':
+          check_command	        => 'check_nrpe!check_gre_tunnels_exist',
+          host_name             => '10.100.0.4',
+          service_description   => 'Openvswitch GRE Tunnel exists',
           use	                => 'generic-service',
     }
 
@@ -682,4 +696,89 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service {'load5-10.100.0.17':
+          check_command	        => 'check_nrpe!load5',
+          host_name             => '10.100.0.17',
+          normal_check_interval	=> 5,
+          service_description   => '5 minute load average',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'df_var-10.100.0.17':
+          check_command	        => 'check_nrpe!df_var',
+          host_name             => '10.100.0.17',
+          service_description   => 'Percent disk space used on /var',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_puppet_agent-10.100.0.17':
+          check_command	        => 'check_nrpe!check_puppet_agent',
+          host_name             => '10.100.0.17',
+          service_description   => 'Puppet agent status',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_em2_down-10.100.0.17':
+          check_command	        => 'check_nrpe!check_em2_down',
+          host_name             => '10.100.0.17',
+	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.17':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.17',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.17':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.17',
+	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service {'load5-10.100.0.18':
+          check_command	        => 'check_nrpe!load5',
+          host_name             => '10.100.0.18',
+          normal_check_interval	=> 5,
+          service_description   => '5 minute load average',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'df_var-10.100.0.18':
+          check_command	        => 'check_nrpe!df_var',
+          host_name             => '10.100.0.18',
+          service_description   => 'Percent disk space used on /var',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_puppet_agent-10.100.0.18':
+          check_command	        => 'check_nrpe!check_puppet_agent',
+          host_name             => '10.100.0.18',
+          service_description   => 'Puppet agent status',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_em2_down-10.100.0.18':
+          check_command	        => 'check_nrpe!check_em2_down',
+          host_name             => '10.100.0.18',
+	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.18':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.18',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.18':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.18',
+	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
 }

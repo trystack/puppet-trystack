@@ -9,10 +9,13 @@ class trystack::nagios {
     class {'apache': }
     class {'apache::mod::php': }
     class {'apache::mod::wsgi':}
+    class {'apache::mod::proxy_http':}
     # The apache module purges files it doesn't know about
     # avoid this be referencing them here
+    file { '/etc/httpd/conf.d/elasticsearch.conf':}
     file { '/etc/httpd/conf.d/nagios.conf':}
     file { '/etc/httpd/conf.d/foreman.conf':}
+    file { '/etc/httpd/conf.d/munin.conf':}
     file { '/etc/httpd/conf.d/passenger.conf':}
     file { '/etc/httpd/conf.d/ssl.conf':}
     file { '/etc/httpd/conf.d/puppet.conf':}

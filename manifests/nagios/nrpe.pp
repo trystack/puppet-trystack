@@ -24,7 +24,7 @@ class trystack::nagios::nrpe {
         file_line{'df_var':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[df_var\]=",
-            line => "command[df_var]=df /var/ | sed -re 's/.* ([0-9]+)%.*/\\1/' | grep -E '^[0-9]'",
+            line => "command[df_var]=/usr/lib64/nagios/plugins/check_df_var",
         }
 
         # disk used on /var
@@ -109,6 +109,12 @@ class trystack::nagios::nrpe {
             line => "command[check_neutron_ovs_agent]=/usr/lib64/nagios/plugins/check_service neutron-openvswitch-agent",
         }
 
+        file_line{'check_gre_tunnels_exist':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_gre_tunnels_exist\]=",
+            line => "command[check_gre_tunnels_exist]=/usr/lib64/nagios/plugins/check_gre_tunnels_exist",
+        }
+
     }
 
     file{"/usr/lib64/nagios/plugins/check_puppet_agent":
@@ -123,6 +129,13 @@ class trystack::nagios::nrpe {
         owner => "nrpe",
         seltype => "nagios_unconfined_plugin_exec_t",
         source => "puppet:///modules/trystack/check_em2_down",
+    }
+
+    file{"/usr/lib64/nagios/plugins/check_df_var":
+        mode => 755,
+        owner => "nrpe",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/check_df_var",
     }
 
     file{"/usr/lib64/nagios/plugins/check_mnt_trystack":
@@ -148,6 +161,14 @@ class trystack::nagios::nrpe {
         owner => "nagios",
         seltype => "nagios_unconfined_plugin_exec_t",
         source => "puppet:///modules/trystack/check_glusterfs",
+        require => [Package['bc'], Package['nagios-plugins']],
+    }
+
+    file{"/usr/lib64/nagios/plugins/check_gre_tunnels_exist":
+        mode => 755,
+        owner => "nagios",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/check_gre_tunnels_exist",
         require => [Package['bc'], Package['nagios-plugins']],
     }
 

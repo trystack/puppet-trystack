@@ -70,15 +70,28 @@ class trystack::nagios::commands {
     }
 
     file{"/usr/lib64/nagios/plugins/neutron-floatingip-list":
+        ensure => "absent",
         mode => 755,
         owner => "nagios",
         seltype => "nagios_unconfined_plugin_exec_t",
         source => "puppet:///modules/trystack/neutron-floatingip-list",
     }
 
+    file{"/usr/lib64/nagios/plugins/neutron-external-port-count":
+        mode => 755,
+        owner => "nagios",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/neutron-external-port-count",
+    }
+
     nagios_command {"neutron-floatingip-list":
+        ensure => "absent",
         command_line => "/usr/lib64/nagios/plugins/neutron-floatingip-list",
         require => Package['python-neutronclient'],
     }
 
+    nagios_command {"neutron-external-port-count":
+        command_line => "/usr/lib64/nagios/plugins/neutron-external-port-count",
+        require => Package['python-neutronclient'],
+    }
 }

@@ -28,4 +28,14 @@ class trystack(){
   #  line    => "    pluginsync=true",
   #}
 
+
+  class { 'munin::client': allow => '10.100.0.1'}
+
+    firewall { '001 munin incoming':
+        proto    => 'tcp',
+        dport    => ['4949'],
+        iniface  => 'em1',
+        action   => 'accept',
+    }
+
 }
