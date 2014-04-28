@@ -3,8 +3,8 @@
 . /etc/nagios/keystonerc_admin
 
 
-critical=100
-warning=90
+critical=125
+warning=120
 
 data=$(nova list --all-tenants  2>&1)
 rv=$?

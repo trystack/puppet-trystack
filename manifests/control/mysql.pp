@@ -2,10 +2,10 @@ class trystack::control::mysql() {
 
     # pacemaker will manage the service.
     class {"mysql::server":
-        manage_service => false,
+    #    manage_service => false,
         config_hash => {bind_address => "0.0.0.0",
                         root_password => "$mysql_root_password",
-                        datadir => '/var/lib/mysql/', }
+                        datadir => '/var/lib/mysql/data/', }
     }
     
     # deleting database users for security
@@ -56,6 +56,12 @@ class trystack::control::mysql() {
         password      => "$neutron_db_password",
         allowed_hosts => "%",
         dbname        => 'ovs_neutron',
+    }
+
+    class {"heat::db::mysql":
+        password      => "$heat_db_password",
+        allowed_hosts => "%",
+        dbname        => 'heat',
     }
 
     mysql::db { "trystack":

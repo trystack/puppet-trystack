@@ -75,7 +75,7 @@ fi
 
 # get volume heal status
 heal=0
-for entries in $(sudo gluster volume heal ${VOLUME} info | awk '/^Number of entries: /{print $4}'); do
+for entries in $(sudo gluster volume heal ${VOLUME} info | grep `hostname -s` -A 1 | awk '/^Number of entries: /{print $4}'); do
 	if [ "$entries" -gt 0 ]; then
 		let $((heal+=entries))
 	fi

@@ -2,6 +2,15 @@
 
 class trystack(){
   require ntp
+
+  service { 'rsyslog': }
+
+  file {"/etc/rsyslog.d/logstash.conf":
+        ensure => present,
+        content => "# Send everything to a logstash server on port 5544:\n#*.* @@host1:5544\n",
+        notify => Service['rsyslog'],
+  }
+
   file {"/etc/hosts":
         ensure => present,
         source => 'puppet:///modules/trystack/hosts',

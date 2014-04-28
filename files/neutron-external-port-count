@@ -11,9 +11,11 @@ if [ "$rv" != "0" ] ; then
     exit $rv
 elif [ $count -gt 180 ]
 then
+    echo $count
     exit 1
 elif [ $count -gt 190 ]
 then
+    echo $count
     exit 2
 fi
 

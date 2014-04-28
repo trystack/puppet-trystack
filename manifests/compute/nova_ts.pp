@@ -130,6 +130,8 @@ class trystack::compute::nova_ts() {
     nova_config{
         "DEFAULT/metadata_host": value => "$private_ip";
         "DEFAULT/sql_connection": value => "mysql://nova@$mysql_ip/nova";
+        "DEFAULT/vif_plugging_is_fatal": value => false;
+        "DEFAULT/vif_plugging_timeout": value => 0;
     }
     
     class {"nova":
@@ -150,6 +152,7 @@ class trystack::compute::nova_ts() {
     }
     
     class {"nova::compute::neutron":
-      libvirt_vif_driver => "nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver",
+      libvirt_vif_driver => "nova.virt.libvirt.vif.LibvirtGenericVIFDriver",
+      #libvirt_vif_driver => "nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver",
     }
 }

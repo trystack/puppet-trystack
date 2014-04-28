@@ -1,5 +1,11 @@
 class trystack::facebook() {
 
+    #file_line{'enable_apipassword':
+    #    path => '/usr/share/openstack-dashboard/openstack_dashboard/dashboards/settings/dashboard.py',
+    #    match => "    panels = ('user', '.*', )",
+    #    line => "    panels = ('user', 'apipassword', )",
+    #}
+
     file {'/usr/lib/python2.6/site-packages/horizon/templates/splash.html':
 #        require => Package['openstack-dashboard'],
         source => 'puppet:///modules/trystack/usr/lib/python2.6/site-packages/horizon/templates/splash.html',

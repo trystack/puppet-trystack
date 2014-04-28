@@ -1,6 +1,10 @@
 class trystack::compute::neutron_ts () {
 
     $neutron_sql_connection = "mysql://neutron:${neutron_db_password}@${mysql_ip}/ovs_neutron"
+
+    neutron_config{
+        "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
+    }
     
     class { 'neutron':
       rpc_backend => 'neutron.openstack.common.rpc.impl_qpid',

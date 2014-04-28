@@ -1,5 +1,6 @@
 class trystack::control::nova_ts() {
 
+
     class {"nova::cert":
         enabled => true,
     }
@@ -17,10 +18,12 @@ class trystack::control::nova_ts() {
         "DEFAULT/quota_instances": value => "3";
         "DEFAULT/quota_cores": value => "6";
         "DEFAULT/quota_ram": value => "12288";
-        "DEFAULT/quota_floating_ips": value => "4";
         "DEFAULT/metadata_host": value => "$::ipaddress_em1";
         "DEFAULT/sql_connection": value => "mysql://nova:$nova_db_password@$mysql_ip/nova";
         "DEFAULT/keystone_ec2_url": value => "http://$private_ip:5000/v2.0/ec2tokens";
+        "DEFAULT/memcache_servers": value => "10.100.0.3:11211";
+        'keystone_authtoken/admin_version':        value => 'v2.0';
+
     }
     
     class {"nova::scheduler":
@@ -31,11 +34,9 @@ class trystack::control::nova_ts() {
         enabled => true,
     }
     
-    # we want pacemaker to control this so
-    # remove the service name so that puppet
-    # doesn't manage it
-    $consoleauth_service_name = ''
-    class {"nova::consoleauth": }
+    class {"nova::consoleauth":
+        enabled => true,
+    }
     
     firewall { '001 novncproxy incoming':
         proto    => 'tcp',
@@ -54,7 +55,7 @@ class trystack::control::nova_ts() {
         qpid_hostname => "$qpid_ip",
         rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
         verbose     => true,
-        debug       => false,
+	debug       => false,
     }
     
     

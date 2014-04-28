@@ -1,19 +1,27 @@
 class trystack::network () {
-    $neutron_sql_connection = "mysql://neutron:${neutron_db_password}@${mysql_ip}/ovs_neutron}"
+    $neutron_sql_connection = "mysql://neutron:${neutron_db_password}@${mysql_ip}/ovs_neutron"
     
     class { 'neutron':
       rpc_backend => 'neutron.openstack.common.rpc.impl_qpid',
       qpid_hostname => "$qpid_ip",
       core_plugin => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
       verbose => true,
+      use_syslog => true,
     }
     
     class { 'neutron::server':
+      connection      => $neutron_sql_connection,
+      sql_connection      => $neutron_sql_connection,
       auth_password => $neutron_user_password,
       auth_host => "$private_ip",
       enabled => true,
     }
     
+    neutron_config{
+        "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
+        "quotas/quota_floatingip": value => "4";
+    }
+
     firewall { '001 neutron incoming':
         proto    => 'tcp',
         dport    => ['9696'],
@@ -23,7 +31,7 @@ class trystack::network () {
     class { 'neutron::plugins::ovs':
       tenant_network_type => 'gre',
       tunnel_id_ranges => '1:1000',
-      sql_connection      => $neutron_sql_connection
+      sql_connection      => $neutron_sql_connection,
     }
     
     class { 'neutron::agents::l3':
@@ -67,6 +75,13 @@ class trystack::network () {
       auth_password => "$neutron_metadata_auth_password",
       auth_url      => "http://${private_ip}:35357/v2.0",
       shared_secret => "$neutron_metadata_shared_secret",
-      metadata_ip   => "$::ipaddress_em1",
+      metadata_ip   => "${private_ip}",
+    }
+
+    cron { "clean-metadata-logs":
+      ensure  => present,
+      command => "find /var/log/neutron/neutron-ns-metadata-proxy-* -mtime +5 -exec rm {} \;",
+      user    => 'root',
+      hour    => 0,
     }
 }    

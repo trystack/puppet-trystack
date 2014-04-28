@@ -4,7 +4,7 @@ class trystack::control::qpid () {
     # so we disable puppet's managment of it
     class {"qpid::server":
         auth => "no",
-        manage_service => false,
+        #manage_service => false,
     }
     
     firewall { '001 qpid incoming':

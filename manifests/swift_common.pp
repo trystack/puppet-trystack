@@ -10,9 +10,9 @@ class trystack::swift_common {
     }
     
     # We need to disable this while rsync causes AVC's
-    #exec{'setenforce 0':
-    #  path => '/usr/sbin',
-    #  notify => Class['swift']
-    #}
+    exec{'setenforce 0':
+      path => '/usr/sbin',
+      notify => Class['swift']
+    }
 
 }

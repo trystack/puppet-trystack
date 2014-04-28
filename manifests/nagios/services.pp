@@ -660,84 +660,84 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
-    nagios_service {'load5-10.100.0.16':
-          check_command	        => 'check_nrpe!load5',
-          host_name             => '10.100.0.16',
-          normal_check_interval	=> 5,
-          service_description   => '5 minute load average',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'df_var-10.100.0.16':
-          check_command	        => 'check_nrpe!df_var',
-          host_name             => '10.100.0.16',
-          service_description   => 'Percent disk space used on /var',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_puppet_agent-10.100.0.16':
-          check_command	        => 'check_nrpe!check_puppet_agent',
-          host_name             => '10.100.0.16',
-          service_description   => 'Puppet agent status',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_mnt_trystack-10.100.0.16':
-          check_command	        => 'check_nrpe!check_mnt_trystack',
-          host_name             => '10.100.0.16',
-          service_description   => 'Glance gluster mount',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_swift_proxy-10.100.0.16':
-          check_command	        => 'check_nrpe!check_swift_proxy',
-          host_name             => '10.100.0.16',
-          service_description   => 'Swift Proxy service check',
-          use	                => 'generic-service',
-    }
-
-    nagios_service {'load5-10.100.0.17':
-          check_command	        => 'check_nrpe!load5',
-          host_name             => '10.100.0.17',
-          normal_check_interval	=> 5,
-          service_description   => '5 minute load average',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'df_var-10.100.0.17':
-          check_command	        => 'check_nrpe!df_var',
-          host_name             => '10.100.0.17',
-          service_description   => 'Percent disk space used on /var',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_puppet_agent-10.100.0.17':
-          check_command	        => 'check_nrpe!check_puppet_agent',
-          host_name             => '10.100.0.17',
-          service_description   => 'Puppet agent status',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_em2_down-10.100.0.17':
-          check_command	        => 'check_nrpe!check_em2_down',
-          host_name             => '10.100.0.17',
-	  service_description   => 'Network interface em2 down',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_nova_compute-10.100.0.17':
-          check_command	        => 'check_nrpe!check_nova_compute',
-          host_name             => '10.100.0.17',
-	  service_description   => 'Nova Compute service check',
-          use	                => 'generic-service',
-    }
-
-    nagios_service { 'check_neutron_ovs_agent-10.100.0.17':
-          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
-          host_name             => '10.100.0.17',
-	  service_description   => 'Neutron OVS Agent service check',
-          use	                => 'generic-service',
-    }
+#    nagios_service {'load5-10.100.0.16':
+#          check_command	        => 'check_nrpe!load5',
+#          host_name             => '10.100.0.16',
+#          normal_check_interval	=> 5,
+#          service_description   => '5 minute load average',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'df_var-10.100.0.16':
+#          check_command	        => 'check_nrpe!df_var',
+#          host_name             => '10.100.0.16',
+#          service_description   => 'Percent disk space used on /var',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_puppet_agent-10.100.0.16':
+#          check_command	        => 'check_nrpe!check_puppet_agent',
+#          host_name             => '10.100.0.16',
+#          service_description   => 'Puppet agent status',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_mnt_trystack-10.100.0.16':
+#          check_command	        => 'check_nrpe!check_mnt_trystack',
+#          host_name             => '10.100.0.16',
+#          service_description   => 'Glance gluster mount',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_swift_proxy-10.100.0.16':
+#          check_command	        => 'check_nrpe!check_swift_proxy',
+#          host_name             => '10.100.0.16',
+#          service_description   => 'Swift Proxy service check',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service {'load5-10.100.0.17':
+#          check_command	        => 'check_nrpe!load5',
+#          host_name             => '10.100.0.17',
+#          normal_check_interval	=> 5,
+#          service_description   => '5 minute load average',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'df_var-10.100.0.17':
+#          check_command	        => 'check_nrpe!df_var',
+#          host_name             => '10.100.0.17',
+#          service_description   => 'Percent disk space used on /var',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_puppet_agent-10.100.0.17':
+#          check_command	        => 'check_nrpe!check_puppet_agent',
+#          host_name             => '10.100.0.17',
+#          service_description   => 'Puppet agent status',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_em2_down-10.100.0.17':
+#          check_command	        => 'check_nrpe!check_em2_down',
+#          host_name             => '10.100.0.17',
+#	  service_description   => 'Network interface em2 down',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_nova_compute-10.100.0.17':
+#          check_command	        => 'check_nrpe!check_nova_compute',
+#          host_name             => '10.100.0.17',
+#	  service_description   => 'Nova Compute service check',
+#          use	                => 'generic-service',
+#    }
+#
+#    nagios_service { 'check_neutron_ovs_agent-10.100.0.17':
+#          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+#          host_name             => '10.100.0.17',
+#	  service_description   => 'Neutron OVS Agent service check',
+#          use	                => 'generic-service',
+#    }
 
     nagios_service {'load5-10.100.0.18':
           check_command	        => 'check_nrpe!load5',

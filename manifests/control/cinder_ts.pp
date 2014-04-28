@@ -15,6 +15,7 @@ class trystack::control::cinder_ts() {
       "DEFAULT/quota_volumes": value => "3";
       #"DEFAULT/glusterfs_sparsed_volumes": value => "true";
       "DEFAULT/glusterfs_qcow2_volumes": value => "true";
+      "DEFAULT/memcache_servers": value => "10.100.0.3:11211";
   }
   
   class {'cinder::api':

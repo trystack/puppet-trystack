@@ -22,11 +22,17 @@ class trystack::control::horizon_ts() {
     # avoid this be referencing them here
     file { '/etc/httpd/conf.d/nagios.conf':}
 
-    #firewall { '001 horizon incoming':
-    #    proto    => 'tcp',
-    #    dport    => ['443', '80'],
-    #    action   => 'accept',
-    #}
+    firewall { '001 horizon incoming':
+        proto    => 'tcp',
+        dport    => ['443', '80'],
+        action   => 'accept',
+    }
+
+    firewall { '001 memcache incoming':
+        proto    => 'tcp',
+        dport    => ['11211'],
+        action   => 'accept',
+    }
 
     if ($::selinux != "false"){
         selboolean{'httpd_can_network_connect':
@@ -39,6 +45,7 @@ class trystack::control::horizon_ts() {
 
     class {'apache::mod::ssl': }
     file {'/etc/httpd/conf.d/ssl.conf':}
+    #file {'/etc/httpd/conf.d/proxy.conf':}
     file {'/etc/httpd/conf.d/ssl_redirect.conf':
         source => 'puppet:///modules/trystack/ssl_redirect.conf',
     }
