@@ -23,14 +23,18 @@ class trystack::control::glance() {
         sql_connection => "mysql://glance:$glance_db_password@$mysql_ip/glance"
     }
     
+    class { 'glance::notify::rabbitmq':
+        rabbit_host      => "$qpid_ip",
+        rabbit_port      => '5672',
+        rabbit_use_ssl   => 'false',
+        rabbit_userid    => 'guest',
+        rabbit_password  => 'guest',
+    }
+
     firewall { '001 glance incoming':
         proto    => 'tcp',
         dport    => ['9292'],
         action   => 'accept',
     }
     
-    glance_api_config {
-        'DEFAULT/notifier_strategy': value => 'qpid';
-        'DEFAULT/qpid_host': value => "$private_ip";
-    }
 }

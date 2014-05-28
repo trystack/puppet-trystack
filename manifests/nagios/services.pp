@@ -56,6 +56,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_mysql':
+          check_command	        => "check_mysql!-H $private_ip -u nagios -p $mysql_nagios_password",
+          host_name             => "$private_ip",
+          service_description   => 'MySql Health check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'load5-10.100.0.1':
           check_command	        => 'check_nrpe!load5',
           host_name             => '10.100.0.1',

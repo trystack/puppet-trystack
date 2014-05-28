@@ -1,8 +1,6 @@
 # Common trystack configurations
 
 class trystack(){
-  require ntp
-
   service { 'rsyslog': }
 
   file {"/etc/rsyslog.d/logstash.conf":

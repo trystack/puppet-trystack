@@ -51,10 +51,12 @@ class trystack::control::nova_ts() {
     Firewall <| |> -> Class['nova']
     
     class {"nova":
+        rabbit_host        => "$qpid_ip",
+        rabbit_port        => '5672',
+        rabbit_userid      => 'guest',
+        rabbit_password    => 'guest',
         glance_api_servers => "${private_ip}:9292",
-        qpid_hostname => "$qpid_ip",
-        rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
-        verbose     => true,
+        verbose     => false,
 	debug       => false,
     }
     

@@ -5,12 +5,18 @@ class trystack::compute::neutron_ts () {
     neutron_config{
         "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
     }
+
+    neutron_plugin_ovs {
+        "AGENT/veth_mtu": value => 1504;
+    }
     
     class { 'neutron':
-      rpc_backend => 'neutron.openstack.common.rpc.impl_qpid',
-      qpid_hostname => "$qpid_ip",
       core_plugin => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
-      verbose => true,
+      verbose => false,
+      rabbit_host        => "$qpid_ip",
+      rabbit_port        => '5672',
+      #rabbit_userid      => 'guest',
+      rabbit_password    => 'guest',
     }
     
     class { 'neutron::plugins::ovs':

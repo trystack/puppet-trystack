@@ -94,4 +94,9 @@ class trystack::nagios::commands {
         command_line => "/usr/lib64/nagios/plugins/neutron-external-port-count",
         require => Package['python-neutronclient'],
     }
+
+    nagios_command {"check_mysql":
+        command_line => "/usr/lib64/nagios/plugins/check_mysql",
+        require => Package['nagios-plugins-mysql'],
+    }
 }

@@ -25,10 +25,12 @@ class trystack::control::ceilometer_ts() {
     
     class { 'ceilometer':
         metering_secret => "$ceilometer_metering_secret",
-        qpid_hostname   => "$qpid_ip",
-        rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',
-        verbose         => true,
+        verbose         => false,
         debug           => false,
+        rabbit_host     => "$qpid_ip",
+        rabbit_port     => '5672',
+        rabbit_userid   => 'guest',
+        rabbit_password => 'guest',
     }
     
     class { 'ceilometer::db':

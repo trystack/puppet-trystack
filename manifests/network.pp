@@ -1,11 +1,16 @@
 class trystack::network () {
+
+    include '::ntp'
+
     $neutron_sql_connection = "mysql://neutron:${neutron_db_password}@${mysql_ip}/ovs_neutron"
     
     class { 'neutron':
-      rpc_backend => 'neutron.openstack.common.rpc.impl_qpid',
-      qpid_hostname => "$qpid_ip",
+      rabbit_host           => "$qpid_ip",
+      rabbit_port           => '5672',
+      rabbit_user           => 'guest',
+      rabbit_password       => 'guest',
       core_plugin => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
-      verbose => true,
+      verbose => false,
       use_syslog => true,
     }
     
@@ -20,6 +25,10 @@ class trystack::network () {
     neutron_config{
         "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
         "quotas/quota_floatingip": value => "4";
+    }
+
+    neutron_plugin_ovs {
+        "AGENT/veth_mtu": value => 1504;
     }
 
     firewall { '001 neutron incoming':

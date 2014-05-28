@@ -1,7 +1,10 @@
 class trystack::nagios {
 #Exec { timeout => 300 }
 
-    package{['nagios', 'nagios-plugins-nrpe', 'nagios-plugins-ping']:
+    package{['nagios',
+             'nagios-plugins-nrpe',
+             'nagios-plugins-ping',
+             'nagios-plugins-mysql']:
         ensure => present,
         before => Class['trystack::nagios::configs']
     }
