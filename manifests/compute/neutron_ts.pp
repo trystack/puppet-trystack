@@ -7,7 +7,7 @@ class trystack::compute::neutron_ts () {
     }
 
     neutron_plugin_ovs {
-        "AGENT/veth_mtu": value => 1504;
+        "AGENT/veth_mtu": value => 1500;
     }
     
     class { 'neutron':
@@ -22,12 +22,14 @@ class trystack::compute::neutron_ts () {
     class { 'neutron::plugins::ovs':
       tenant_network_type => 'gre',
       tunnel_id_ranges => '1:1000',
+      #network_vlan_ranges => 'physnet1:1000:2999',
       sql_connection      => $neutron_sql_connection
     }
     
     class { 'neutron::agents::ovs':
       enable_tunneling => true,
       local_ip => $::ipaddress_em1,
+      #bridge_mappings => ['physnet1:br-em1'],
     }
     
     

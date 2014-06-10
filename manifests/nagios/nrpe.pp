@@ -55,10 +55,16 @@ class trystack::nagios::nrpe {
             line => "command[check_mnt_trystack]=/usr/lib64/nagios/plugins/check_mnt_trystack",
         }
 
-        file_line{'check_glusterfs':
+        file_line{'check_glusterfs_trystack':
             path => '/etc/nagios/nrpe.cfg',
-            match => "command\[check_glusterfs\]=",
-            line => "command[check_glusterfs]=/usr/lib64/nagios/plugins/check_glusterfs -v trystack -n 3",
+            match => "command\[check_glusterfs_trystack\]=",
+            line => "command[check_glusterfs_trystack]=/usr/lib64/nagios/plugins/check_glusterfs -v trystack -n 3",
+        }
+
+        file_line{'check_glusterfs_mysql':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_glusterfs_mysql\]=",
+            line => "command[check_glusterfs_mysql]=/usr/lib64/nagios/plugins/check_glusterfs -v mysql -n 3",
         }
 
         file_line{'check_neutron_dhcp_agent':

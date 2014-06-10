@@ -57,8 +57,8 @@ class trystack::nagios::services {
     }
 
     nagios_service { 'check_mysql':
-          check_command	        => "check_mysql!-H $private_ip -u nagios -p $mysql_nagios_password",
-          host_name             => "$private_ip",
+          check_command	        => "check_mysql!nagios!$mysql_nagios_password",
+          host_name             => "$mysql_ip",
           service_description   => 'MySql Health check',
           use	                => 'generic-service',
     }
@@ -581,10 +581,17 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
-    nagios_service { 'check_gluster-10.100.0.13':
-          check_command	        => 'check_nrpe!check_glusterfs',
+    nagios_service { 'check_gluster_trystack-10.100.0.13':
+          check_command	        => 'check_nrpe!check_glusterfs_trystack',
           host_name             => '10.100.0.13',
-          service_description   => 'Gluster Server Health Check',
+          service_description   => 'Gluster TryStack Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mysql-10.100.0.13':
+          check_command	        => 'check_nrpe!check_glusterfs_mysql',
+          host_name             => '10.100.0.13',
+          service_description   => 'Gluster Mysql Health Check',
           use	                => 'generic-service',
     }
 
@@ -592,6 +599,20 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.13',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.13':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.13',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.13':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.13',
+	  service_description   => 'Neutron OVS Agent service check',
           use	                => 'generic-service',
     }
 
@@ -617,10 +638,17 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
-    nagios_service { 'check_gluster-10.100.0.14':
-          check_command	        => 'check_nrpe!check_glusterfs',
+    nagios_service { 'check_gluster_trystack-10.100.0.14':
+          check_command	        => 'check_nrpe!check_glusterfs_trystack',
           host_name             => '10.100.0.14',
-          service_description   => 'Gluster Server Health Check',
+          service_description   => 'Gluster TryStack Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mysql-10.100.0.14':
+          check_command	        => 'check_nrpe!check_glusterfs_mysql',
+          host_name             => '10.100.0.14',
+          service_description   => 'Gluster Mysql Health Check',
           use	                => 'generic-service',
     }
 
@@ -628,6 +656,20 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.14',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.14':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.14',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.14':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.14',
+	  service_description   => 'Neutron OVS Agent service check',
           use	                => 'generic-service',
     }
 
@@ -653,10 +695,17 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
-    nagios_service { 'check_gluster-10.100.0.15':
-          check_command	        => 'check_nrpe!check_glusterfs',
+    nagios_service { 'check_gluster_trystack-10.100.0.15':
+          check_command	        => 'check_nrpe!check_glusterfs_trystack',
           host_name             => '10.100.0.15',
-          service_description   => 'Gluster Server Health Check',
+          service_description   => 'Gluster Trystack Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mysql-10.100.0.15':
+          check_command	        => 'check_nrpe!check_glusterfs_mysql',
+          host_name             => '10.100.0.15',
+          service_description   => 'Gluster Mysql Health Check',
           use	                => 'generic-service',
     }
 
@@ -664,6 +713,20 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => '10.100.0.15',
 	  service_description   => 'Network interface em2 down',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_nova_compute-10.100.0.15':
+          check_command	        => 'check_nrpe!check_nova_compute',
+          host_name             => '10.100.0.15',
+	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_neutron_ovs_agent-10.100.0.15':
+          check_command	        => 'check_nrpe!check_neutron_ovs_agent',
+          host_name             => '10.100.0.15',
+	  service_description   => 'Neutron OVS Agent service check',
           use	                => 'generic-service',
     }
 

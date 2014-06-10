@@ -101,16 +101,26 @@ class trystack::compute::nova_ts() {
         require => Exec['virsh-net-destroy-default'],
     }
     
+    ceilometer_config{
+        'service_credentials/os_endpoint_type': value => 'internalUrl';
+    }
     class { 'ceilometer':
         metering_secret => "$ceilometer_metering_secret",
         verbose         => false,
         debug           => false,
+        rabbit_host           => "$qpid_ip",
+        rabbit_port           => '5672',
+        rabbit_userid         => 'guest',
+        rabbit_password       => 'guest',
     }
+
+    class { 'ceilometer::agent::auth':
+        auth_url      => "http://${private_ip}:35357/v2.0",
+        auth_password => "$ceilometer_user_password",
+    }
+
     
-    class { 'ceilometer::agent::compute':
-        #auth_url      => "http://$private_ip:35357/v2.0",
-        #auth_password => "$ceilometer_user_password",
-    }
+    class { 'ceilometer::agent::compute': }
     
     # if fqdn is not set correctly we have to tell compute agent which host it should query
     if !$::fqdn or $::fqdn != $::hostname {
@@ -138,7 +148,7 @@ class trystack::compute::nova_ts() {
         debug       => false,
         rabbit_host           => "$qpid_ip",
         rabbit_port           => '5672',
-        #rabbit_user           => 'guest',
+        rabbit_userid         => 'guest',
         rabbit_password       => 'guest',
     }
     
@@ -149,6 +159,8 @@ class trystack::compute::nova_ts() {
       neutron_url => "http://$neutron_ip:9696",
       neutron_admin_tenant_name => "services",
       neutron_admin_auth_url => "http://$private_ip:35357/v2.0",
+      vif_plugging_is_fatal => false,
+      vif_plugging_timeout => '300',
     }
     
     class {"nova::compute::neutron":

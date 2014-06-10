@@ -28,7 +28,7 @@ class trystack::network () {
     }
 
     neutron_plugin_ovs {
-        "AGENT/veth_mtu": value => 1504;
+        "AGENT/veth_mtu": value => 1500;
     }
 
     firewall { '001 neutron incoming':
@@ -39,6 +39,7 @@ class trystack::network () {
     
     class { 'neutron::plugins::ovs':
       tenant_network_type => 'gre',
+      #network_vlan_ranges => 'physnet1:1000:2999',
       tunnel_id_ranges => '1:1000',
       sql_connection      => $neutron_sql_connection,
     }
@@ -62,14 +63,9 @@ class trystack::network () {
     class { 'neutron::agents::ovs':
       enable_tunneling => true,
       local_ip => $::ipaddress_em1,
+      #bridge_mappings => ['physnet1:br-em1'],
     }
     
-    
-    neutron_dhcp_agent_config {
-        "DEFAULT/dnsmasq_config_file":
-            value => "/etc/neutron/dnsmasq-neutron.conf";
-    }
-
     file {'/etc/neutron/dnsmasq-neutron.conf':
         content => "dhcp-option-force=26,1450",
         before => Class['neutron::agents::dhcp'],
@@ -77,6 +73,7 @@ class trystack::network () {
   
     class { 'neutron::agents::dhcp':
       interface_driver => 'neutron.agent.linux.interface.OVSInterfaceDriver',
+      dnsmasq_config_file => "/etc/neutron/dnsmasq-neutron.conf",
     }
     
     

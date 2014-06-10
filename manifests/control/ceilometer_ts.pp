@@ -42,15 +42,24 @@ class trystack::control::ceilometer_ts() {
         require => Class['mongodb'],
     }
     
-    class { 'ceilometer::agent::central':
-        #auth_url      => "http://${::ipaddress}:35357/v2.0",
-        #auth_password => "$ceilometer_user_password",
+    class { 'ceilometer::agent::auth':
+        auth_url      => "http://${private_ip}:35357/v2.0",
+        auth_password => "$ceilometer_user_password",
     }
+
+    class { 'ceilometer::agent::central': }
+    class { 'ceilometer::alarm::notifier': }
+    class { 'ceilometer::alarm::evaluator': }
     
     class { 'ceilometer::api':
-        keystone_host     => "$::ipaddress",
+        keystone_host     => "$private_ip",
         keystone_password => "$ceilometer_user_password",
         require           => Class['mongodb'],
+    }
+
+    service { 'openstack-ceilometer-notification':
+        ensure => 'running',
+        require => Class['ceilometer::collector'],
     }
 
 }

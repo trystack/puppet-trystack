@@ -2,6 +2,7 @@ class trystack::nagios::hosts {
 
     nagios_host { "$public_fqdn": , use => 'linux-server', address => "$public_fqdn"}
     nagios_host { "$private_ip": , use => 'linux-server', address => "$private_ip"}
+    nagios_host { "$mysql_ip": , use => 'linux-server', address => "$mysql_ip"}
     nagios_host { '10.100.0.1': , use => 'linux-server', address => '10.100.0.1'}
 #    nagios_host { '10.100.0.2': , use => 'linux-server', address => '10.100.0.2'}
     nagios_host { '10.100.0.3': , use => 'linux-server', address => '10.100.0.3'}

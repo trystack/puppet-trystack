@@ -25,7 +25,7 @@ class trystack::nagios::commands {
         mode => 755,
         owner => "nagios",
         seltype => "nagios_unconfined_plugin_exec_t",
-        content => template("packstack/glance-index.erb"),
+        source => "puppet:///modules/trystack/glance-index",
     }
  
     nagios_command {"glance-index":
@@ -49,7 +49,7 @@ class trystack::nagios::commands {
         mode => 755,
         owner => "nagios",
         seltype => "nagios_unconfined_plugin_exec_t",
-        content => template("packstack/cinder-list.erb"),
+        source => "puppet:///modules/trystack/cinder-list",
     }
 
     nagios_command {"cinder-list":
@@ -96,7 +96,7 @@ class trystack::nagios::commands {
     }
 
     nagios_command {"check_mysql":
-        command_line => "/usr/lib64/nagios/plugins/check_mysql",
+        command_line => '/usr/lib64/nagios/plugins/check_mysql -H $HOSTADDRESS$ -u $ARG1$ -p $ARG2$',
         require => Package['nagios-plugins-mysql'],
     }
 }
