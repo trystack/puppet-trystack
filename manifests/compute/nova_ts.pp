@@ -138,8 +138,6 @@ class trystack::compute::nova_ts() {
     nova_config{
         "DEFAULT/metadata_host": value => "$private_ip";
         "DEFAULT/sql_connection": value => "mysql://nova@$mysql_ip/nova";
-        "DEFAULT/vif_plugging_is_fatal": value => false;
-        "DEFAULT/vif_plugging_timeout": value => 0;
     }
     
     class {"nova":
@@ -160,7 +158,7 @@ class trystack::compute::nova_ts() {
       neutron_admin_tenant_name => "services",
       neutron_admin_auth_url => "http://$private_ip:35357/v2.0",
       vif_plugging_is_fatal => false,
-      vif_plugging_timeout => '300',
+      vif_plugging_timeout => '10',
     }
     
     class {"nova::compute::neutron":

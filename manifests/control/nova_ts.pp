@@ -67,6 +67,8 @@ class trystack::control::nova_ts() {
       neutron_url => "http://${neutron_ip}:9696",
       neutron_admin_tenant_name => "services",
       neutron_admin_auth_url => "http://${private_ip}:35357/v2.0",
+      vif_plugging_is_fatal => false,
+      vif_plugging_timeout => '10',
     }
     
     class {"nova::compute::neutron":

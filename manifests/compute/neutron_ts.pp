@@ -6,10 +6,6 @@ class trystack::compute::neutron_ts () {
         "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
     }
 
-    neutron_plugin_ovs {
-        "AGENT/veth_mtu": value => 1500;
-    }
-    
     class { 'neutron':
       core_plugin => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
       verbose => false,

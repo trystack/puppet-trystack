@@ -5,7 +5,9 @@ class trystack::control::mysql() {
     #    manage_service => false,
         config_hash => {bind_address => "0.0.0.0",
                         root_password => "$mysql_root_password",
-                        datadir => '/var/lib/mysql/data/', }
+                        datadir => '/var/lib/mysql/data/',
+                        default_engine => 'InnoDb',
+                        }
     }
     
     # deleting database users for security

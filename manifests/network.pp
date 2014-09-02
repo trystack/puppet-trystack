@@ -10,6 +10,7 @@ class trystack::network () {
       rabbit_user           => 'guest',
       rabbit_password       => 'guest',
       core_plugin => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
+      allow_overlapping_ips => true,
       verbose => false,
       use_syslog => true,
     }
@@ -25,10 +26,6 @@ class trystack::network () {
     neutron_config{
         "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
         "quotas/quota_floatingip": value => "4";
-    }
-
-    neutron_plugin_ovs {
-        "AGENT/veth_mtu": value => 1500;
     }
 
     firewall { '001 neutron incoming':
