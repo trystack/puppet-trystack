@@ -452,6 +452,27 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_gluster_trystack-host10':
+          check_command	        => 'check_nrpe!check_glusterfs_trystack',
+          host_name             => 'host10',
+          service_description   => 'Gluster TryStack Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mysql-host10':
+          check_command	        => 'check_nrpe!check_glusterfs_mysql',
+          host_name             => 'host10',
+          service_description   => 'Gluster Mysql Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mongo-host10':
+          check_command	        => 'check_nrpe!check_glusterfs_mongo',
+          host_name             => 'host10',
+          service_description   => 'Gluster Mongo Health Check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_em2_down-host10':
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => 'host10',
@@ -495,6 +516,27 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_gluster_trystack-host11':
+          check_command	        => 'check_nrpe!check_glusterfs_trystack',
+          host_name             => 'host11',
+          service_description   => 'Gluster TryStack Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mysql-host11':
+          check_command	        => 'check_nrpe!check_glusterfs_mysql',
+          host_name             => 'host11',
+          service_description   => 'Gluster Mysql Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mongo-host11':
+          check_command	        => 'check_nrpe!check_glusterfs_mongo',
+          host_name             => 'host11',
+          service_description   => 'Gluster Mongo Health Check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_em2_down-host11':
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => 'host11',
@@ -535,6 +577,27 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_puppet_agent',
           host_name             => 'host12',
           service_description   => 'Puppet agent status',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_trystack-host12':
+          check_command	        => 'check_nrpe!check_glusterfs_trystack',
+          host_name             => 'host12',
+          service_description   => 'Gluster TryStack Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mysql-host12':
+          check_command	        => 'check_nrpe!check_glusterfs_mysql',
+          host_name             => 'host12',
+          service_description   => 'Gluster Mysql Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mongo-host12':
+          check_command	        => 'check_nrpe!check_glusterfs_mongo',
+          host_name             => 'host12',
+          service_description   => 'Gluster Mongo Health Check',
           use	                => 'generic-service',
     }
 
@@ -595,6 +658,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_gluster_mongo-host13':
+          check_command	        => 'check_nrpe!check_glusterfs_mongo',
+          host_name             => 'host13',
+          service_description   => 'Gluster Mongo Health Check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_em2_down-host13':
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => 'host13',
@@ -652,6 +722,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_gluster_mongo-host14':
+          check_command	        => 'check_nrpe!check_glusterfs_mongo',
+          host_name             => 'host14',
+          service_description   => 'Gluster Mongo Health Check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_em2_down-host14':
           check_command	        => 'check_nrpe!check_em2_down',
           host_name             => 'host14',
@@ -706,6 +783,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_glusterfs_mysql',
           host_name             => 'host15',
           service_description   => 'Gluster Mysql Health Check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_gluster_mongo-host15':
+          check_command	        => 'check_nrpe!check_glusterfs_mongo',
+          host_name             => 'host15',
+          service_description   => 'Gluster Mongo Health Check',
           use	                => 'generic-service',
     }
 
