@@ -85,15 +85,11 @@ class trystack::control::keystone_ts() {
         internal_address  => "$private_ip",
     }
 
-    #class {"heat::keystone::auth":
-    #    password          => "$heat_user_password",
-    #    heat_public_address    => "$public_ip",
-    #    heat_admin_address     => "$private_ip",
-    #    heat_internal_address  => "$private_ip",
-    #    #cfn_public_address => "$public_ip",
-    #    #cfn_admin_address => "$private_ip",
-    #    #cfn_internal_address => "$private_ip",
-
-    #}
+    class {"heat::keystone::auth":
+        password          => "$heat_user_password",
+        public_address    => "$public_ip",
+        admin_address     => "$private_ip",
+        internal_address  => "$private_ip",
+    }
 
 }
