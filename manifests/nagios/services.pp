@@ -280,6 +280,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ovs_tunnel-host05':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host05',
+	  service_description   => 'OVS tunnel connectivity',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_ceilometer_compute-host05':
           check_command	        => 'check_nrpe!check_ceilometer_compute',
           host_name             => 'host05',
@@ -327,6 +334,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host06',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ovs_tunnel-host06':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host06',
+	  service_description   => 'OVS tunnel connectivity',
           use	                => 'generic-service',
     }
 
@@ -380,6 +394,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ovs_tunnel-host07':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host07',
+	  service_description   => 'OVS tunnel connectivity',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_ceilometer_compute-host07':
           check_command	        => 'check_nrpe!check_ceilometer_compute',
           host_name             => 'host07',
@@ -430,6 +451,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ovs_tunnel-host08':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host08',
+	  service_description   => 'OVS tunnel connectivity',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_ceilometer_compute-host08':
           check_command	        => 'check_nrpe!check_ceilometer_compute',
           host_name             => 'host08',
@@ -477,6 +505,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host09',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ovs_tunnel-host09':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host09',
+	  service_description   => 'OVS tunnel connectivity',
           use	                => 'generic-service',
     }
 
@@ -551,6 +586,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ovs_tunnel-host10':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host10',
+	  service_description   => 'OVS tunnel connectivity',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_ceilometer_compute-host10':
           check_command	        => 'check_nrpe!check_ceilometer_compute',
           host_name             => 'host10',
@@ -619,6 +661,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host11',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ovs_tunnel-host11':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host11',
+	  service_description   => 'OVS tunnel connectivity',
           use	                => 'generic-service',
     }
 
@@ -693,6 +742,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ovs_tunnel-host12':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host12',
+	  service_description   => 'OVS tunnel connectivity',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_ceilometer_compute-host12':
           check_command	        => 'check_nrpe!check_ceilometer_compute',
           host_name             => 'host12',
@@ -764,6 +820,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ovs_tunnel-host13':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host13',
+	  service_description   => 'OVS tunnel connectivity',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_ceilometer_compute-host13':
           check_command	        => 'check_nrpe!check_ceilometer_compute',
           host_name             => 'host13',
@@ -825,6 +888,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_nova_compute',
           host_name             => 'host14',
 	  service_description   => 'Nova Compute service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ovs_tunnel-host14':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host14',
+	  service_description   => 'OVS tunnel connectivity',
           use	                => 'generic-service',
     }
 
@@ -903,6 +973,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host15',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ovs_tunnel-host15':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host15',
+	  service_description   => 'OVS tunnel connectivity',
           use	                => 'generic-service',
     }
 
@@ -1031,6 +1108,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host18',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ovs_tunnel-host18':
+          check_command	        => 'check_nrpe!check_ovs_tunnel',
+          host_name             => 'host18',
+	  service_description   => 'OVS tunnel connectivity',
           use	                => 'generic-service',
     }
 

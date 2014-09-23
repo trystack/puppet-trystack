@@ -4,7 +4,9 @@ class trystack::compute() {
     restrict => ['10.100.0.0 mask 255.255.255.0 nomodify notrap'],
   }
 
-  package{ ['openstack-selinux', 'glusterfs-fuse']:
+  package{ ['openstack-selinux',
+            'glusterfs-fuse',
+            'nagios-plugins-ping']:
       ensure => present,
   }
 

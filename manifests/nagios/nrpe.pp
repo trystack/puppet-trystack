@@ -139,10 +139,18 @@ class trystack::nagios::nrpe {
             line => "command[check_memcached]=/usr/lib64/nagios/plugins/check_service memcached",
         }
 
+        # for the network node
         file_line{'check_gre_tunnels_exist':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_gre_tunnels_exist\]=",
             line => "command[check_gre_tunnels_exist]=/usr/lib64/nagios/plugins/check_gre_tunnels_exist",
+        }
+
+        # for the compute nodes
+        file_line{'check_ovs_tunnel':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_ovs_tunnel\]=",
+            line => "command[check_ovs_tunnel]=/usr/lib64/nagios/plugins/check_ping -H 10.0.0.3 -w 1000.0,25% -c 2000.0,100% -p 5",
         }
 
     }
