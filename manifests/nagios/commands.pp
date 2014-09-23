@@ -5,7 +5,9 @@ class trystack::nagios::commands {
                'python-novaclient',
                'python-swiftclient',
                'python-cinderclient',
-               'python-neutronclient']:
+               'python-neutronclient',
+               'python-heatclient']:
+
         ensure => 'present',
     }
 
@@ -67,6 +69,18 @@ class trystack::nagios::commands {
     nagios_command {"swift-list":
         command_line => "/usr/lib64/nagios/plugins/swift-list",
         require => Package['python-swiftclient'],
+    }
+
+    file{"/usr/lib64/nagios/plugins/heat-stack-list":
+        mode => 755,
+        owner => "nagios",
+        seltype => "nagios_unconfined_plugin_exec_t",
+        source => "puppet:///modules/trystack/heat-stack-list",
+    }
+
+    nagios_command {"heat-stack-list":
+        command_line => "/usr/lib64/nagios/plugins/heat-stack-list",
+        require => Package['python-heatclient'],
     }
 
     file{"/usr/lib64/nagios/plugins/neutron-floatingip-list":

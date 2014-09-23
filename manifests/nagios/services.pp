@@ -56,6 +56,14 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service {'heat-stack-list':
+          check_command	        => 'heat-stack-list',
+          host_name             => "$private_ip",
+          normal_check_interval	=> 5,
+          service_description   => 'number of heat stacks for admin',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_mysql':
           check_command	        => "check_mysql!nagios!$mysql_nagios_password",
           host_name             => "$mysql_ip",
