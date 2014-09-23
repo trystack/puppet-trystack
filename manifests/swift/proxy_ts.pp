@@ -6,7 +6,7 @@ class trystack::swift::proxy_ts inherits trystack::swift::common {
     #class { 'memcached': }
     
     class { 'swift::proxy':
-      proxy_local_net_ip => "$::ipaddress", #swift proxy address
+      proxy_local_net_ip => "$::ipaddress_em1", #swift proxy address
       pipeline           => [
     #    'catch_errors',
         'healthcheck',
