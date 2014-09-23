@@ -152,6 +152,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_memcached-host03':
+          check_command	        => 'check_nrpe!check_memcached',
+          host_name             => 'host03',
+          service_description   => 'Memcached service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-10.100.0.4':
           check_command	        => 'check_nrpe!load5',
           host_name             => '10.100.0.4',

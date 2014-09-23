@@ -121,6 +121,12 @@ class trystack::nagios::nrpe {
             line => "command[check_neutron_ovs_agent]=/usr/lib64/nagios/plugins/check_service neutron-openvswitch-agent",
         }
 
+        file_line{'check_memcached':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_memcached\]=",
+            line => "command[check_memcached]=/usr/lib64/nagios/plugins/check_service memcached",
+        }
+
         file_line{'check_gre_tunnels_exist':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_gre_tunnels_exist\]=",

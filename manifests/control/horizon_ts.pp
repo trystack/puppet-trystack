@@ -13,6 +13,7 @@ class trystack::control::horizon_ts() {
     class {'horizon':
        secret_key => "$horizon_secret_key",
        keystone_host => "$private_ip",
+       keystone_default_role => '_member_',
     }
 
     class {'memcached':}

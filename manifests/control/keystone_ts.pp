@@ -9,6 +9,12 @@ class trystack::control::keystone_ts() {
         #"memcache/servers": value => "10.100.0.3:11211";
     }
 
+    file { "/usr/share/keystone/keystone-dist-paste.ini":
+        ensure => present,
+        source => "puppet:///modules/trystack/keystone-dist-paste.ini",
+        group  => "keystone",
+    }
+
     class {"keystone":
         admin_token => "$keystone_admin_token",
         sql_connection => "mysql://keystone_admin:$keystone_db_password@$mysql_ip/keystone",
