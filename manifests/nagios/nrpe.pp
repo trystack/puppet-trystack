@@ -121,6 +121,12 @@ class trystack::nagios::nrpe {
             line => "command[check_nova_compute]=/usr/lib64/nagios/plugins/check_service openstack-nova-compute",
         }
 
+        file_line{'check_ceilometer_compute':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_ceilometer_compute\]=",
+            line => "command[check_ceilometer_compute]=/usr/lib64/nagios/plugins/check_service openstack-ceilometer-compute",
+        }
+
         file_line{'check_neutron_ovs_agent':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_neutron_ovs_agent\]=",

@@ -280,6 +280,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ceilometer_compute-host05':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host05',
+	  service_description   => 'Ceilometer Compute service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-host06':
           check_command	        => 'check_nrpe!load5',
           host_name             => 'host06',
@@ -320,6 +327,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host06',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ceilometer_compute-host06':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host06',
+	  service_description   => 'Ceilometer Compute service check',
           use	                => 'generic-service',
     }
 
@@ -366,6 +380,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ceilometer_compute-host07':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host07',
+	  service_description   => 'Ceilometer Compute service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-host08':
           check_command	        => 'check_nrpe!load5',
           host_name             => 'host08',
@@ -409,6 +430,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ceilometer_compute-host08':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host08',
+	  service_description   => 'Ceilometer Compute service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-host09':
           check_command	        => 'check_nrpe!load5',
           host_name             => 'host09',
@@ -449,6 +477,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host09',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ceilometer_compute-host09':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host09',
+	  service_description   => 'Ceilometer Compute service check',
           use	                => 'generic-service',
     }
 
@@ -516,6 +551,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ceilometer_compute-host10':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host10',
+	  service_description   => 'Ceilometer Compute service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-host11':
           check_command	        => 'check_nrpe!load5',
           host_name             => 'host11',
@@ -577,6 +619,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host11',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ceilometer_compute-host11':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host11',
+	  service_description   => 'Ceilometer Compute service check',
           use	                => 'generic-service',
     }
 
@@ -644,6 +693,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ceilometer_compute-host12':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host12',
+	  service_description   => 'Ceilometer Compute service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-host13':
           check_command	        => 'check_nrpe!load5',
           host_name             => 'host13',
@@ -705,6 +761,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host13',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ceilometer_compute-host13':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host13',
+	  service_description   => 'Ceilometer Compute service check',
           use	                => 'generic-service',
     }
 
@@ -772,6 +835,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ceilometer_compute-host14':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host14',
+	  service_description   => 'Ceilometer Compute service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service {'load5-host15':
           check_command	        => 'check_nrpe!load5',
           host_name             => 'host15',
@@ -836,6 +906,12 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_ceilometer_compute-host15':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host15',
+	  service_description   => 'Ceilometer Compute service check',
+          use	                => 'generic-service',
+    }
 #    nagios_service {'load5-host16':
 #          check_command	        => 'check_nrpe!load5',
 #          host_name             => 'host16',
@@ -955,6 +1031,13 @@ class trystack::nagios::services {
           check_command	        => 'check_nrpe!check_neutron_ovs_agent',
           host_name             => 'host18',
 	  service_description   => 'Neutron OVS Agent service check',
+          use	                => 'generic-service',
+    }
+
+    nagios_service { 'check_ceilometer_compute-host18':
+          check_command	        => 'check_nrpe!check_ceilometer_compute',
+          host_name             => 'host18',
+	  service_description   => 'Ceilometer Compute service check',
           use	                => 'generic-service',
     }
 }
