@@ -1,5 +1,9 @@
 class trystack::control::glance() {
 
+    class {"glance::config":
+        api_config => { 'DEFAULT/container_format' =>  { value => 'ami,ari,aki,bare,ovf,ova,docker', }, },
+    }
+
     class {"glance::api":
         bind_host => $::ipaddress_em1,
         auth_host => "$private_ip",

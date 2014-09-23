@@ -10,7 +10,6 @@ class trystack::compute() {
       ensure => present,
   }
 
-  class { "trystack::compute::nova_ts": }
   class { "trystack::compute::neutron_ts": }
 
 
