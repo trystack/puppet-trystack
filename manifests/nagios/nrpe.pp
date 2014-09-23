@@ -91,6 +91,12 @@ class trystack::nagios::nrpe {
             line => "command[check_neutron_l3_agent]=/usr/lib64/nagios/plugins/check_service neutron-l3-agent",
         }
 
+        file_line{'check_neutron_lbaas_agent':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_neutron_lbaas_agent\]=",
+            line => "command[check_neutron_lbaas_agent]=/usr/lib64/nagios/plugins/check_service neutron-lbaas-agent",
+        }
+
         file_line{'check_neutron_metadata_agent':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_neutron_metadata_agent\]=",

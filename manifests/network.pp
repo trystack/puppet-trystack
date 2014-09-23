@@ -25,6 +25,7 @@ class trystack::network () {
     
     neutron_config{
         "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
+        "DEFAULT/service_plugins": value => "lbaas";
         "quotas/quota_floatingip": value => "4";
     }
 
@@ -79,6 +80,10 @@ class trystack::network () {
       auth_url      => "http://${private_ip}:35357/v2.0",
       shared_secret => "$neutron_metadata_shared_secret",
       metadata_ip   => "${private_ip}",
+    }
+
+    class {'neutron::agents::lbaas':
+      user_group => "nobody",
     }
 
     cron { "clean-metadata-logs":

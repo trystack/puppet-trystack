@@ -14,6 +14,8 @@ class trystack::control::horizon_ts() {
        secret_key => "$horizon_secret_key",
        keystone_host => "$private_ip",
        keystone_default_role => '_member_',
+       #for use when most recent horizon module is adopted
+       #neutron_options => {'enable_lb' => true, },
     }
 
     class {'memcached':}

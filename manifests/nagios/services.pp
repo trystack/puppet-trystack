@@ -209,6 +209,13 @@ class trystack::nagios::services {
           use	                => 'generic-service',
     }
 
+    nagios_service { 'check_neutron_lbaas_agent-10.100.0.4':
+          check_command	        => 'check_nrpe!check_neutron_lbaas_agent',
+          host_name             => '10.100.0.4',
+          service_description   => 'Neutron LBaas Agent service check',
+          use	                => 'generic-service',
+    }
+
     nagios_service { 'check_neutron_ovs_cleanup-10.100.0.4':
           check_command	        => 'check_nrpe!check_neutron_ovs_cleanup',
           host_name             => '10.100.0.4',
