@@ -1,4 +1,5 @@
 class trystack::facebook() {
+    package {'python-django-horizon-facebook': }
 
     #file_line{'enable_apipassword':
     #    path => '/usr/share/openstack-dashboard/openstack_dashboard/dashboards/settings/dashboard.py',

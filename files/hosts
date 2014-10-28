@@ -19,3 +19,8 @@
 10.100.0.17 host17.trystack.org host17
 10.100.0.18 host18.trystack.org host18
 
+
+10.1.254.2 control.example.com control
+10.1.254.4 network.example.com network
+10.1.254.5 compute1.example.com compute1
+10.1.254.8 compute2.example.com compute2

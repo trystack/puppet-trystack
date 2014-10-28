@@ -4,17 +4,9 @@ class trystack::compute::nova_libvirt() inherits trystack::compute::nova_base {
     # preventing a clash with rules being set by libvirt
     Firewall <| |> -> Class['nova::compute::libvirt']
     
-    if $::is_virtual_packstack == "true" {
-        $libvirt_type = "qemu"
-        nova_config{
-            "DEFAULT/libvirt_cpu_mode": value => "none";
-        }
-    }else{
-        $libvirt_type = "kvm"
-    }
-    
     nova_config{
-        "DEFAULT/libvirt_inject_partition": value => "-1";
+       # "DEFAULT/libvirt_inject_partition": value => "-1";
+        "libvirt/inject_partition": value => "-1";
     }
     
     package { 'qemu-kvm':
@@ -23,28 +15,19 @@ class trystack::compute::nova_libvirt() inherits trystack::compute::nova_base {
     }
     
     class { 'nova::compute::libvirt':
-      libvirt_type                => "$libvirt_type",
-      vncserver_listen            => "$::ipaddress_em1",
+      libvirt_type       => "kvm",
+      #vncserver_listen   => "$::ipaddress_em1",
+      vncserver_listen   => "0.0.0.0",
+      migration_support  => true,
     }
     
-    exec {'load_kvm':
-        user => 'root',
-        command => '/bin/sh /etc/sysconfig/modules/kvm.modules',
-        unless => '/usr/bin/test -e /etc/sysconfig/modules/kvm.modules',
-    }
+    #exec {'load_kvm':
+    #    user => 'root',
+    #    command => '/bin/sh /etc/sysconfig/modules/kvm.modules',
+    #    unless => '/usr/bin/test -e /etc/sysconfig/modules/kvm.modules',
+    #}
     
-    Class['nova::compute']-> Exec["load_kvm"]
-    
-    # Note : remove this once we're installing a version of openstack that isn't
-    #        supported on RHEL 6.3
-    if $::is_virtual_packstack == "true" and $::osfamily == "RedHat" and
-        $::operatingsystemrelease == "6.3"{
-        file { "/usr/bin/qemu-system-x86_64":
-            ensure => link,
-            target => "/usr/libexec/qemu-kvm",
-            notify => Service["nova-compute"],
-        }
-    }
+    #Class['nova::compute']-> Exec["load_kvm"]
     
     # Tune the host with a virtual hosts profile
     package {'tuned':
