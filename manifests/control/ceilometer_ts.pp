@@ -1,65 +1,45 @@
 class trystack::control::ceilometer_ts() {
 
-    class { 'mongodb':
-        enable_10gen => false,
-        port         => '27017',
-        before       => Class['ceilometer::db'],
-        require      => Firewall['001 mongodb incoming localhost'],
-    }
-    
-    firewall { '001 mongodb incoming localhost':
-        proto       => 'tcp',
-        dport       => ['27017'],
-        iniface     => 'lo',
-        #source      => 'localhost',
-        #destination => 'localhost',
-        action      => 'accept',
-    }
+    if $amqp_ip == '' { fail('amqp_ip is empty') }
+    if $private_ip == '' { fail('private_ip is empty') }
+    if $ceilometer_metering_secret == '' { fail('ceilometer_metering_secret is empty') }
+    if $ceilometer_user_password == '' { fail('ceilometer_user_password is empty') }
 
-   firewall { '001 ceilometer incoming':
-      proto    => 'tcp',
-      dport    => ['8777'],
-      action   => 'accept',
-    }
-
-    
     class { 'ceilometer':
         metering_secret => "$ceilometer_metering_secret",
         verbose         => false,
         debug           => false,
-        rabbit_host     => "$qpid_ip",
+        rabbit_host     => "$amqp_ip",
         rabbit_port     => '5672',
         rabbit_userid   => 'guest',
         rabbit_password => 'guest',
     }
-    
     class { 'ceilometer::db':
-        database_connection => 'mongodb://localhost:27017/ceilometer',
-        require             => Class['mongodb'],
+        database_connection => "mongodb://${private_ip}:27017/ceilometer",
     }
-    
-    class { 'ceilometer::collector':
-        require => Class['mongodb'],
-    }
-    
+
+    class { 'ceilometer::collector': }
+    class { 'ceilometer::agent::notification': }
+    class { 'ceilometer::agent::central': }
+    class { 'ceilometer::alarm::notifier': } 
+    class { 'ceilometer::alarm::evaluator': }
+
+
     class { 'ceilometer::agent::auth':
         auth_url      => "http://${private_ip}:35357/v2.0",
         auth_password => "$ceilometer_user_password",
     }
 
-    class { 'ceilometer::agent::central': }
-    class { 'ceilometer::alarm::notifier': }
-    class { 'ceilometer::alarm::evaluator': }
-    
     class { 'ceilometer::api':
         keystone_host     => "$private_ip",
         keystone_password => "$ceilometer_user_password",
-        require           => Class['mongodb'],
     }
 
-    service { 'openstack-ceilometer-notification':
-        ensure => 'running',
-        require => Class['ceilometer::collector'],
+    packstack::firewall {'ceilometer_api':
+      host => 'ALL',
+      service_name => 'ceilometer-api',
+      chain => 'INPUT',
+      ports => '8777',
+      proto => 'tcp',
     }
-
 }

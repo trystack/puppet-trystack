@@ -61,7 +61,7 @@ defaults = {
 config = ConfigParser.SafeConfigParser(defaults)
 
 # generate
-if 0:
+if 1:
     cfgfile = open("trystack.cfg.new", 'w')
     cfgfile.add_section('NAGIOS')
     cfgfile.set('NAGIOS','user', 'admin')

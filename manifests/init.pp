@@ -1,13 +1,32 @@
 # Common trystack configurations
 
 class trystack(){
+
+  exec{'selinux permissive':
+       command => '/usr/sbin/setenforce 0',
+       onlyif => '/usr/sbin/getenforce | grep Enforcing',
+  }
+
   service { 'rsyslog': }
 
-  file {"/etc/rsyslog.d/logstash.conf":
-        ensure => present,
-        content => "# Send everything to a logstash server on port 5544:\n#*.* @@host1:5544\n",
-        notify => Service['rsyslog'],
+  package { 'audit':
+    ensure => present,
+  } ->
+  service { 'auditd':
+    ensure => running,
+    enable => true,
   }
+
+  package{ 'glusterfs-fuse':
+    ensure => present,
+  }
+
+
+  #file {"/etc/rsyslog.d/logstash.conf":
+  #      ensure => present,
+  #      content => "# Send everything to a logstash server on port 5544:\n#*.* @@host1:5544\n",
+  #      notify => Service['rsyslog'],
+  #}
 
   file {"/etc/hosts":
         ensure => present,
@@ -36,13 +55,34 @@ class trystack(){
   #}
 
 
-  class { 'munin::client': allow => '10.100.0.1'}
+  class { 'munin::client': allow => ['10.100.0.1']}
 
-    firewall { '001 munin incoming':
-        proto    => 'tcp',
-        dport    => ['4949'],
-        iniface  => 'em1',
-        action   => 'accept',
-    }
+  firewall { '001 munin incoming':
+    proto    => 'tcp',
+    dport    => ['4949'],
+    iniface  => 'em1',
+    action   => 'accept',
+  }
+
+
+  package { 'firewalld':
+    ensure => absent,
+  }
+
+  service { "firewalld":
+    ensure => "stopped",
+    enable => false,
+    #before => [Service['iptables'], Package['firewalld']],
+    before => Package['firewalld'],
+  }
+
+  package { 'iptables':
+    ensure => present,
+  }
+
+  #service { "iptables":
+  #  ensure => "running",
+  #  require => Package['iptables'],
+  #}
 
 }
