@@ -6,7 +6,7 @@ class trystack::nagios::hosts {
     nagios_host { 'host01': , use => 'linux-server', address => '10.100.0.1'}
 #    nagios_host { '10.100.0.2': , use => 'linux-server', address => '10.100.0.2'}
     nagios_host { 'host03': , use => 'linux-server', address => '10.100.0.3'}
-    nagios_host { '10.100.0.4': , use => 'linux-server', address => '10.100.0.4'}
+    nagios_host { "$neutron_ip": , use => 'linux-server', address => "$neutron_ip"}
     nagios_host { 'host05': , use => 'linux-server', address => '10.100.0.5'}
     nagios_host { 'host06': , use => 'linux-server', address => '10.100.0.6'}
     nagios_host { 'host07': , use => 'linux-server', address => '10.100.0.7'}

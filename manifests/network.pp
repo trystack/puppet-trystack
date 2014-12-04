@@ -6,6 +6,7 @@ class trystack::network () {
   if $nova_user_password == '' { fail('nova_user_password is empty') }
   if $neutron_user_password == '' { fail('neutron_user_password is empty') }
   if $neutron_db_password == '' { fail('neutron_db_password is empty') }
+  if $neutron_metadata_shared_secret == '' { fail('neutron_metadata_shared_secret is empty') }
 
   $neutron_sql_connection = "mysql://neutron:${neutron_db_password}@${mysql_ip}/neutron"
 
@@ -79,18 +80,18 @@ class trystack::network () {
     tunnel_types     => ['vxlan'],
     local_ip         => $::ipaddress_em1,
     vxlan_udp_port   => 4789,
-    l2_population    => false,
+    l2_population    => true,
   }
 
   class { 'neutron::plugins::ml2':
     type_drivers          => ['vxlan'],
     tenant_network_types  => ['vxlan'],
-    mechanism_drivers     => ['openvswitch'],
+    mechanism_drivers     => ['openvswitch', 'l2population'],
     flat_networks         => ['*'],
     network_vlan_ranges   => [],
     tunnel_id_ranges      => [],
     vxlan_group           => undef,
-    vni_ranges            => ['10:100'],
+    vni_ranges            => ['10:1000'],
     enable_security_group => true,
   }
 
@@ -100,7 +101,7 @@ class trystack::network () {
     debug            => false,
   }
 
-  packstack::firewall {'neutron_dhcp_in_10.1.254.4':
+  packstack::firewall {'neutron_dhcp_in':
     host => 'ALL',
     service_name => 'neutron dhcp in: ',
     chain => 'INPUT',
@@ -108,7 +109,7 @@ class trystack::network () {
     proto => 'udp',
   }
 
-  packstack::firewall {'neutron_dhcp_out_10.1.254.4':
+  packstack::firewall {'neutron_dhcp_out':
     host => 'ALL',
     service_name => 'neutron dhcp out: ',
     chain => 'OUTPUT',
@@ -116,7 +117,7 @@ class trystack::network () {
     proto => 'udp',
   }
 
-  packstack::firewall {'neutron_server_10.1.254.2':
+  packstack::firewall {'neutron_server':
     host => 'ALL',
     service_name => 'neutron server',
     chain => 'INPUT',
@@ -150,7 +151,7 @@ class trystack::network () {
   }
 
   class {'neutron::agents::metadata':
-    auth_password => "$neutron_metadata_auth_password",
+    auth_password => "$neutron_user_password",
     auth_url      => "http://${private_ip}:35357/v2.0",
     shared_secret => "$neutron_metadata_shared_secret",
     metadata_ip   => "${private_ip}",
@@ -162,6 +163,17 @@ class trystack::network () {
 
   neutron_config{
       "quotas/quota_floatingip": value => "4";
+      "DEFAULT/router_distributed": value => "False"; #DVR = True
+      "DEFAULT/dvr_base_mac": value => "fa:16:3f:4f:00:00"; #DVR
+  }
+  
+  neutron_l3_agent_config{
+      "DEFAULT/agent_mode": value => "legacy"; #DVR = dvs_snat
+  }
+  
+  class {"neutron::config":
+      plugin_ovs_config =>
+          {"agent/enable_distributed_routing" =>  { value => "False"}}, #DVR = True
   }
   
   file {'/etc/neutron/dnsmasq-neutron.conf':

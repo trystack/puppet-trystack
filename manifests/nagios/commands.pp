@@ -113,4 +113,9 @@ class trystack::nagios::commands {
         command_line => '/usr/lib64/nagios/plugins/check_mysql -H $HOSTADDRESS$ -u $ARG1$ -p $ARG2$',
         require => Package['nagios-plugins-mysql'],
     }
+
+    nagios_command {"check_rabbitmq_aliveness":
+        command_line => 'exec sudo /usr/lib64/nagios/plugins/check_rabbitmq_aliveness --extra-opts=$ARG1$',
+        require => Package['nagios-plugins-mysql'],
+    }
 }

@@ -1,0 +1,49 @@
+export OS_REGION_NAME=RegionOne
+export OS_TENANT_NAME=admin
+export OS_USERNAME=admin
+export OS_AUTH_URL=http://<%= @private_ip %>:5000/v2.0/
+export OS_PASSWORD=<%= @admin_password %>
+
+ADMIN_TENANT="7812baa44f5a4fc9871990ff82d88f91"
+
+#python /etc/cron.hourly/cleanup.py
+
+#HEAT="select id from stack where deleted_at is NULL and created_at < DATE_SUB(NOW(),INTERVAL 1 DAY);"
+#for x in `mysql -uheat -p<%= @heat_db_password %> -h <%= @mysql_ip %> heat -e "$HEAT" | tail -n +2`; do
+#    heat stack-delete $x > /dev/null;
+#done
+
+NOVA="select uuid from instances where not deleted and created_at < DATE_SUB(NOW(),INTERVAL 1 DAY) and project_id != '${ADMIN_TENANT}';"
+for x in `mysql -unova -p<%= @nova_db_password %> -h <%= @mysql_ip %> nova -e "$NOVA" | tail -n +2`; do
+    nova reset-state --active $x > /dev/null;
+    sleep 1;
+    nova reboot --hard $x > /dev/null;
+    sleep 1;
+    nova delete $x > /dev/null;
+done
+
+NEUTRON="select id from floatingips where fixed_port_id is NULL;"
+for x in `mysql -uneutron -p<%= @neutron_db_password %> -h <%= @mysql_ip %> neutron -e "$NEUTRON" | tail -n +2`; do
+    neutron floatingip-delete $x > /dev/null;
+done
+
+CINDER="select id from snapshots where deleted = 0 and created_at < DATE_SUB(NOW(),INTERVAL 2 DAY);"
+for x in `mysql -ucinder -p<%= @cinder_db_password %> -h <%= @mysql_ip %> cinder -e "$CINDER" | tail -n +2`; do
+    cinder snapshot-delete $x > /dev/null;
+done
+
+CINDER="select id from volumes where attached_host is NULL and deleted = 0 and attach_status = 'detached' and created_at < DATE_SUB(NOW(),INTERVAL 2 DAY);"
+for x in `mysql -ucinder -p<%= @cinder_db_password %> -h <%= @mysql_ip %> cinder -e "$CINDER" | tail -n +2`; do
+    cinder force-delete $x > /dev/null;
+done
+
+GLANCE="select id from images where deleted = 0 and is_public = 1 and status = 'active' and owner != '${ADMIN_TENANT}';"
+for x in `mysql -uglance -p<%= @glance_db_password %> -h <%= @mysql_ip %> glance -e "$GLANCE" | tail -n +2`; do
+    glance image-update --is-public=False $x > /dev/null;
+done
+
+GLANCE="select id from images where deleted = 0 and created_at < DATE_SUB(NOW(),INTERVAL 30 DAY) and owner != '${ADMIN_TENANT}';"
+for x in `mysql -uglance -p<%= @glance_db_password %> -h <%= @mysql_ip %> glance -e "$GLANCE" | tail -n +2`; do
+    glance image-update --is-protected=False $x > /dev/null;
+    glance image-delete $x > /dev/null;
+done

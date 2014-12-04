@@ -1,5 +1,9 @@
 class trystack::control::horizon_ts() {
 
+  if $public_fqdn == '' { fail('public_fqdn is empty') }
+  if $horizon_secret_key == '' { fail('horizon_secret_key is empty') }
+
+
   include concat::setup
 
 #$horizon_packages = ["python-memcached", "python-netaddr"]
@@ -10,10 +14,11 @@ class trystack::control::horizon_ts() {
 #}
 
   class {'horizon':
-    secret_key => 'b08921d6ec6d486b90c2fbea525f5aca',
-    keystone_host => '10.1.254.2',
+    servername => $public_fqdn,
+    secret_key => $horizon_secret_key,
+    keystone_host => $private_ip,
     keystone_default_role => '_member_',
-    #fqdn => ['10.1.254.2', "$::fqdn", 'localhost'],
+    #fqdn => [$private_ip, "$::fqdn", 'localhost'],
     # TO-DO: Parameter fqdn is used both for ALLOWED_HOSTS in settings_local.py
     #        and for ServerAlias directives in vhost.conf which is breaking server
     #        accessibility. We need ALLOWED_HOSTS values, but we have to avoid
@@ -23,12 +28,9 @@ class trystack::control::horizon_ts() {
     can_set_mount_point => 'False',
     django_debug => false ? {true => 'True', false => 'False'},
     listen_ssl => true,
-    #horizon_cert => '/etc/pki/tls/certs/x86.trystack.org.crt',
-    #horizon_key => '/etc/pki/tls/private/x86.trystack.org.key',
-    #horizon_ca => '/etc/pki/tls/certs/ssl_ps_chain.crt',
-    horizon_cert => '/etc/pki/tls/certs/localhost.crt',
-    horizon_key => '/etc/pki/tls/private/localhost.key',
-    horizon_ca => '/etc/pki/tls/certs/localhost.crt',
+    horizon_cert => '/etc/pki/tls/certs/x86.trystack.org.crt',
+    horizon_key => '/etc/pki/tls/private/x86.trystack.org.key',
+    horizon_ca => '/etc/pki/tls/certs/gd_bundle-g2-g1.crt',
     neutron_options => {
       'enable_lb' => true,
       'enable_firewall' => true
@@ -75,12 +77,5 @@ class trystack::control::horizon_ts() {
     ##file {'/etc/httpd/conf.d/proxy.conf':}
     #file {'/etc/httpd/conf.d/ssl_redirect.conf':
     #    source => 'puppet:///modules/trystack/ssl_redirect.conf',
-    #}
-
-    #file_line{'apipassword':
-    #    path => '/usr/share/openstack-dashboard/openstack_dashboard/dashboards/settings/dashboard.py',
-    #    match => '^    panels = ',
-    #    line => "    panels = ('user', 'apipassword', )",
-    #    notify => Service['httpd'],
     #}
 }

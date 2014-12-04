@@ -1,5 +1,9 @@
 class trystack::nagios::configs {
 
+    if $admin_password == '' { fail('admin_password is empty') }
+    if $nagios_user == '' { fail('nagios_user is empty') }
+    if $nagios_password == '' { fail('nagios_password is empty') }
+
     file{['/etc/nagios/nagios_command.cfg', '/etc/nagios/nagios_host.cfg']:
         ensure => 'present',
         mode => '0644',

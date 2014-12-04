@@ -13,12 +13,12 @@ class trystack::loadbalancer {
         options => { 'stats' => 'enable', },
     }
 
-    haproxy::frontend { 'keystone-frontend':
-        ipaddress => [$private_ip, $public_ip],
-        ports     => '5000',
-        options   => { 'default_backend' => 'keystone-backend', },
-        mode      => 'http',
-    }
+    #haproxy::frontend { 'keystone-frontend':
+    #    ipaddress => [$private_ip, $public_ip],
+    #    ports     => '5000',
+    #    options   => { 'default_backend' => 'keystone-backend', },
+    #    mode      => 'http',
+    #}
 
     haproxy::backend { 'keystone-backend':
         options => { 'balance' => 'roundrobin',
@@ -28,12 +28,12 @@ class trystack::loadbalancer {
         }
     }
 
-    haproxy::frontend { 'keystone-admin-frontend':
-        ipaddress => [$private_ip],
-        ports     => '35357',
-        options   => { 'default_backend' => 'keystone-admin-backend', },
-        mode      => 'http',
-    }
+    #haproxy::frontend { 'keystone-admin-frontend':
+    #    ipaddress => [$private_ip],
+    #    ports     => '35357',
+    #    options   => { 'default_backend' => 'keystone-admin-backend', },
+    #    mode      => 'http',
+    #}
 
     haproxy::backend { 'keystone-admin-backend':
         options => { 'balance' => 'roundrobin',
@@ -85,6 +85,21 @@ class trystack::loadbalancer {
                      'mode'    => 'http',
                      'server'  => ['host3 10.100.0.3:8775 check inter 10s',
                                    'host16 10.100.0.16:8775 check inter 10s',]
+        }
+    }
+
+    haproxy::frontend { 'neutron-frontend':
+        ipaddress => [$private_ip, $public_ip],
+        ports     => '9696',
+        options   => { 'default_backend' => 'neutron-backend', },
+        mode      => 'http',
+    }
+
+    haproxy::backend { 'neutron-backend':
+        options => { 'balance' => 'roundrobin',
+                     'mode'    => 'http',
+                     'server'  => ['host4 10.100.0.4:9696 check inter 10s',
+                                   'host16 10.100.0.16:9696 check inter 10s',]
         }
     }
 
@@ -147,5 +162,14 @@ class trystack::loadbalancer {
                                    'host16 10.100.0.16:8080 check inter 10s',]
         }
     }
+
+    
+  packstack::firewall {'neutron_server':
+    host => 'ALL',
+    service_name => 'neutron server',
+    chain => 'INPUT',
+    ports => '9696',
+    proto => 'tcp',
+  }
 
 }

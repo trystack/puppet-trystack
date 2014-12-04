@@ -27,18 +27,12 @@ class trystack::control::keystone_ts() {
         "cache/memcache_servers": value => "${memcache_ip}:11211";
     }
 
-    file { "/usr/share/keystone/keystone-dist-paste.ini":
-        ensure => present,
-        source => "puppet:///modules/trystack/keystone-dist-paste.ini",
-        group  => "keystone",
-    }
-
     class {"keystone":
       admin_token => "$keystone_admin_token",
       sql_connection => "mysql://keystone_admin:$keystone_db_password@$mysql_ip/keystone",
       token_format => "PKI",
-      token_driver => "keystone.token.backends.memcache.Token",
-      bind_host => $::ipaddress_em1,
+      token_driver => "keystone.token.persistence.backends.memcache.Token",
+      #bind_host => $::ipaddress_em1,
       memcache_servers => ["${memcache_ip}:11211",],
       token_expiration => 3600,
       verbose => true,
@@ -123,9 +117,12 @@ keystone_endpoint { "${cinder::keystone::auth::region}/${cinder::keystone::auth:
     
     class {"neutron::keystone::auth":
       password          => "$neutron_user_password",
-      public_address    => "$neutron_ip",
-      admin_address     => "$neutron_ip",
-      internal_address  => "$neutron_ip",
+      public_address    => "$public_ip",
+      admin_address     => "$private_ip",
+      internal_address  => "$private_ip",
+      #public_address    => "$neutron_ip",
+      #admin_address     => "$neutron_ip",
+      #internal_address  => "$neutron_ip",
     }
     
     
@@ -136,12 +133,12 @@ keystone_endpoint { "${cinder::keystone::auth::region}/${cinder::keystone::auth:
       internal_address  => "$private_ip",
     }
 
-    class { 'swift::keystone::auth':
-      password          => "$swift_user_password",
-      public_address    => "$public_ip",
-      admin_address     => "$private_ip",
-      internal_address  => "$private_ip",
-    }
+    #class { 'swift::keystone::auth':
+    #  password          => "$swift_user_password",
+    #  public_address    => "$public_ip",
+    #  admin_address     => "$private_ip",
+    #  internal_address  => "$private_ip",
+    #}
 
     class {"heat::keystone::auth":
       password          => "$heat_user_password",

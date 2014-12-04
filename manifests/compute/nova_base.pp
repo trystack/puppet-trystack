@@ -11,21 +11,21 @@ class trystack::compute::nova_base() {
   package{'python-cinderclient':
       before => Class["nova"]
   }
-  
+
   nova_config{
       "DEFAULT/volume_api_class": value => "nova.volume.cinder.API";
       "DEFAULT/cinder_catalog_info": value => "volume:cinder:internalURL";
       "DEFAULT/metadata_host": value => "$private_ip";
       "DEFAULT/sql_connection": value => "mysql://nova@$mysql_ip/nova";
   }
-  
+
   class {"nova::compute":
       enabled => true,
       vncproxy_protocol => 'http',
       vncproxy_host => "$public_fqdn",
       vncserver_proxyclient_address => "$::ipaddress_em1",
   }
-  
+
   packstack::firewall {'nova_compute':
     host => "$private_ip",
     service_name => 'nova compute',
@@ -33,15 +33,15 @@ class trystack::compute::nova_base() {
     ports => ['5900-5999'],
     proto => 'tcp',
   }
-  
-  
+
+
   # if fqdn is not set correctly we have to tell compute agent which host it should query
   if !$::fqdn or $::fqdn != $::hostname {
       ceilometer_config {
           'DEFAULT/host': value => $::hostname
       }
   }
-  
+
   # Ensure Firewall changes happen before nova services start
   # preventing a clash with rules being set by nova-compute and nova-network
   Firewall <| |> -> Class['nova']
