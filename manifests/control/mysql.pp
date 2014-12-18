@@ -10,6 +10,7 @@ class trystack::control::mysql() {
     if $heat_db_password == '' { fail('heat_db_password is empty') }
     if $trystack_db_password == '' { fail('trystack_db_password is empty') }
 
+    package {"nagios-plugins-mysql": }
     class {"mysql::server":
         package_name     => "mariadb-galera-server",
         service_manage   => true,
@@ -23,8 +24,6 @@ class trystack::control::mysql() {
           }
         }
     }
-
-    include packstack::innodb
 
     # deleting database users for security
     # this is done in mysql::server::account_security but has problems
@@ -98,7 +97,7 @@ class trystack::control::mysql() {
     #    action => 'accept',
     #}
     packstack::firewall {'mysql':
-      host => '10.1.254.0/24',
+      host => '10.100.0.0/24',
       service_name => 'mysql',
       chain => 'INPUT',
       ports => '3306',
@@ -119,14 +118,12 @@ class trystack::control::mysql() {
     mysql::db { "trystack":
         user         => "trystack",
         password     => $trystack_db_password,
-        host         => $mysql_ip,
+        #host         => $mysql_ip,
     }
-    # these are done in mysql::db
-    #mysql_user { "trystack@%":
-    #    password_hash => mysql_password($trystack_db_password),
-    #    provider      => 'mysql',
-    #    require       => Database["trystack"],
-    #}
+    mysql_user { "nagios@${nagios_ip}":
+        password_hash => mysql_password($mysql_nagios_password),
+        provider      => 'mysql',
+    }
     #mysql_grant { "trystack@%/trystack":
     #    # TODO figure out which privileges to grant.
     #    table      => '.*',

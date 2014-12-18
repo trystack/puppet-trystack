@@ -1,5 +1,6 @@
 class trystack::nagios::nrpe {
-    Exec { timeout => 300 }
+
+    if $nagios_ip == '' { fail('nagios_ip is empty') }
 
     package{'nrpe':
         ensure => present,
@@ -150,9 +151,20 @@ class trystack::nagios::nrpe {
         file_line{'check_ovs_tunnel':
             path => '/etc/nagios/nrpe.cfg',
             match => "command\[check_ovs_tunnel\]=",
-            line => "command[check_ovs_tunnel]=/usr/lib64/nagios/plugins/check_ping -H 10.0.0.3 -w 1000.0,25% -c 2000.0,100% -p 5",
+            line => "command[check_ovs_tunnel]=/usr/lib64/nagios/plugins/check_ping -H 192.168.122.3 -w 1000.0,25% -c 2000.0,100% -p 5",
         }
 
+        file_line{'check_rabbitmq_aliveness':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_rabbitmq_aliveness\]=",
+            line => "command[check_rabbitmq_aliveness]=/usr/lib64/nagios/plugins/check_rabbitmq_aliveness --port=15672 -H 10.100.0.3",
+        }
+
+        file_line{'check_mongod_connect':
+            path => '/etc/nagios/nrpe.cfg',
+            match => "command\[check_mongodb\]=",
+            line => "command[check_mongodb]=/usr/bin/python /usr/lib64/nagios/plugins/check_mongodb.py -H 10.100.0.3 -A connect",
+        }
     }
 
     file{"/usr/lib64/nagios/plugins/check_puppet_agent":

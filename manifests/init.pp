@@ -2,6 +2,9 @@
 
 class trystack(){
 
+  class { "trystack::ntpd": }
+  class {"trystack::nagios::nrpe": }
+
   exec{'selinux permissive':
        command => '/usr/sbin/setenforce 0',
        onlyif => '/usr/sbin/getenforce | grep Enforcing',
@@ -17,10 +20,15 @@ class trystack(){
     enable => true,
   }
 
-  package{ 'glusterfs-fuse':
+  package{['glusterfs-fuse', 'nagios-plugins-load', 'nagios-plugins-ping']:
     ensure => present,
   }
 
+
+  file {'/etc/cron.hourly/trystack-cleanup.sh':
+    content => template('trystack/cron.hourly-trystack-cleanup.sh.erb'),
+    ensure => absent,
+  }
 
   #file {"/etc/rsyslog.d/logstash.conf":
   #      ensure => present,
@@ -29,17 +37,27 @@ class trystack(){
   #}
 
   file {"/etc/hosts":
-        ensure => present,
-        source => 'puppet:///modules/trystack/hosts',
+    ensure => present,
+    source => 'puppet:///modules/trystack/hosts',
   }
   file {"/root/.ssh/":
-        ensure => directory,
-        mode   => 700,
+    ensure => directory,
+    mode   => 700,
   }
   file {"/root/.ssh/authorized_keys":
-        ensure => present,
-        mode   => 600,
-        source => 'puppet:///modules/trystack/ssh_authorized_keys',
+    ensure => present,
+    mode   => 600,
+    source => 'puppet:///modules/trystack/ssh_authorized_keys',
+    require => File['/root/.ssh/'],
+    notify => Service['sshd']
+  }
+  service {'sshd': }
+
+  file_line{'disable password login':
+    path => '/etc/ssh/sshd_config',
+    match => '^PasswordAuthentication.*',
+    line => 'PasswordAuthentication no',
+    require => File['/root/.ssh/authorized_keys'],
   }
 
   file_line { 'puppet_report_on':
@@ -76,7 +94,7 @@ class trystack(){
     before => Package['firewalld'],
   }
 
-  package { 'iptables':
+  package { ['iptables', 'iptables-services']:
     ensure => present,
   }
 
@@ -85,4 +103,20 @@ class trystack(){
   #  require => Package['iptables'],
   #}
 
+  package {['NetworkManager', 'NetworkManager-tui', 'NetworkManager-config-server', 'NetworkManager-glib']:
+    ensure => absent,
+  }
+
+  service { "NetworkManager":
+    ensure => stopped,
+    enable => false,
+    #before => [Service['iptables'], Package['firewalld']],
+    before => Package['NetworkManager'],
+  }
+
+  service { "network":
+    ensure => running,
+    enable => false,
+    before => Service['NetworkManager'],
+  }
 }

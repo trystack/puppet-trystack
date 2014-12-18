@@ -8,7 +8,7 @@ class trystack::control::mongodb {
   }
 
   packstack::firewall {'mongodb':
-    host => "$private_ip",
+    host => "10.100.0.3",
     service_name => 'mongodb-server',
     chain => 'INPUT',
     ports => '27017',

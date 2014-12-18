@@ -1,5 +1,9 @@
 class trystack::compute::neutron_ts () {
 
+  # Remove DVR
+  package { "openstack-neutron-ml2": ensure => absent, }
+
+
   if $private_ip == '' { fail('private_ip is empty') }
   if $neutron_ip == '' { fail('neutron_ip is empty') }
   if $mysql_ip == '' { fail('mysql_ip is empty') }
@@ -11,6 +15,7 @@ class trystack::compute::neutron_ts () {
 
   neutron_config{
       "DEFAULT/nova_url": value => "http://${private_ip}:8774/v2";
+      "DEFAULT/router_distributed": value => "False"; #DVR = True
   }
 
   class { 'neutron':
@@ -55,7 +60,7 @@ class trystack::compute::neutron_ts () {
     #require => Class['neutron::agents::ml2::ovs'],
   }
 
-  class { 'packstack::neutron::bridge': }
+  #class { 'packstack::neutron::bridge': }
 
   class {"nova::network::neutron":
     neutron_admin_password => "$neutron_user_password",

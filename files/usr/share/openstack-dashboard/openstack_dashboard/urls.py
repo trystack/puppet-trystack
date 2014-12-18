@@ -1,5 +1,3 @@
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
-
 # Copyright 2012 United States Government as represented by the
 # Administrator of the National Aeronautics and Space Administration.
 # All Rights Reserved.
@@ -24,9 +22,9 @@ URL patterns for the OpenStack Dashboard.
 
 from django.conf import settings
 from django.conf.urls import include  # noqa
-from django.conf.urls import patterns  # noqa
+from django.conf.urls import patterns
 from django.conf.urls.static import static  # noqa
-from django.conf.urls import url  # noqa
+from django.conf.urls import url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns  # noqa
 
 import horizon

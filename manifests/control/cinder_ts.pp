@@ -4,6 +4,9 @@ class trystack::control::cinder_ts() {
   if $private_ip == '' { fail('private_ip is empty') }
   if $mysql_ip == '' { fail('mysql_ip is empty') }
   if $memcache_ip == '' { fail('memcache_ip is empty') }
+  if $gluster_shares == '' { fail('gluster_shares is empty') }
+  if $cinder_db_password == '' { fail('cinder_db_password is empty') }
+  if $cinder_user_password == '' { fail('cinder_user_password is empty') }
 
   class {'cinder':
     sql_connection => "mysql://cinder:$cinder_db_password@$mysql_ip/cinder",
@@ -61,21 +64,13 @@ class trystack::control::cinder_ts() {
   }
 
   
-  # Create firewall rules to allow only the FIREWALL_ALLOWED
-  # hosts that need to connect via FIREWALL_PORTS
-  # using FIREWALL_CHAIN
-
-  packstack::firewall {'cinder_10.1.254.6':
-    host => '10.1.254.6',
+  packstack::firewall {'cinder':
+    host => '10.100.0.0/24',
     service_name => 'cinder',
     chain => 'INPUT',
     ports => ['3260'],
     proto => 'tcp',
   }
-
-  # Create firewall rules to allow only the FIREWALL_ALLOWED
-  # hosts that need to connect via FIREWALL_PORTS
-  # using FIREWALL_CHAIN
 
   packstack::firewall {'cinder_API':
     host => 'ALL',

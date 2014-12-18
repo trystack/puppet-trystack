@@ -2,7 +2,6 @@ class trystack::control() {
 
     #include '::ntp'
     # _ts (trystack) suffix is to workaround naming conflics
-
     class { "trystack::control::amqp": }
     class { "trystack::control::mysql": }
     class { "trystack::control::mongodb": }
@@ -18,13 +17,16 @@ class trystack::control() {
     class { "trystack::control::glance":
         require => [Service["mysqld"], Service['rabbitmq-server']]
     }
+    #class { "trystack::control::neutron_ts":
+    #    require => [Service["mysqld"], Service['rabbitmq-server']]
+    #}
     class { "trystack::control::horizon_ts":
         require => [Service["mysqld"],
                     Class["trystack::control::memcache"]],
     }
-    #class { "trystack::facebook":
-    #    require => Class["trystack::control::horizon_ts"],
-    #}
+    class { "trystack::facebook":
+        require => Class["trystack::control::horizon_ts"],
+    }
     class { "trystack::control::cinder_ts":
         require => [Service["mysqld"], Service['rabbitmq-server'],
                     Class["trystack::control::keystone_ts"]]
@@ -34,7 +36,20 @@ class trystack::control() {
                     Class['trystack::control::amqp'],
                     Class["trystack::control::keystone_ts"]]
     }
-    #class { "trystack::swift::proxy_ts": }
-    #class { "trystack::control::heat_ts": }
+    class { "trystack::swift::proxy_ts": }
+    class { "trystack::control::heat_ts": }
+
+    class { "trystack::control::trove_ts":
+        require => [Service["mysqld"], Service['rabbitmq-server']]
+    }
+
+  file {'/etc/cron.hourly/trystack_cleanup.sh':
+    mode => "700",
+    content => template('trystack/cron.hourly-trystack-cleanup.sh.erb'),
+  }
+  file {'/etc/cron.daily/trystack_cleanup.sh':
+    mode => "700",
+    content => template('trystack/cron.daily-trystack-cleanup.sh.erb'),
+  }
 }
 

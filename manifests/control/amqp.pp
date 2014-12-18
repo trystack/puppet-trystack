@@ -1,6 +1,6 @@
 class trystack::control::amqp {
 
-  package { "erlang":
+  package {["erlang", "perl-Nagios-Plugin"]:
     ensure => "installed"
   }
 
@@ -14,41 +14,16 @@ class trystack::control::amqp {
     default_pass     => 'guest',
     package_provider => 'yum',
     admin_enable     => false,
+    #config_variables => {"loopback_users" =>  "[]",},
   }
 
   Package['erlang']->Class['rabbitmq']
 
-#  # Create firewall rules to allow only the FIREWALL_ALLOWED
-#  # hosts that need to connect via FIREWALL_PORTS
-#  # using FIREWALL_CHAIN
-#
-#  packstack::firewall {'amqp_10.1.254.2':
-#    host => '10.1.254.2',
-#    service_name => 'amqp',
-#    chain => 'INPUT',
-#    ports => ['5671', '5672'],
-#    proto => 'tcp',
-#  }
-#  # Create firewall rules to allow only the FIREWALL_ALLOWED
-#  # hosts that need to connect via FIREWALL_PORTS
-#  # using FIREWALL_CHAIN
-#
-#  packstack::firewall {'amqp_10.1.254.6':
-#    host => '10.1.254.6',
-#    service_name => 'amqp',
-#    chain => 'INPUT',
-#    ports => ['5671', '5672'],
-#    proto => 'tcp',
-#  }
-#  # Create firewall rules to allow only the FIREWALL_ALLOWED
-#  # hosts that need to connect via FIREWALL_PORTS
-#  # using FIREWALL_CHAIN
-#
-#  packstack::firewall {'amqp_10.1.254.4':
-#    host => '10.1.254.4',
-#    service_name => 'amqp',
-#    chain => 'INPUT',
-#    ports => ['5671', '5672'],
-#    proto => 'tcp',
-#  }
+  packstack::firewall {'amqp':
+    host => '10.100.0.0/24',
+    service_name => 'amqp',
+    chain => 'INPUT',
+    ports => ['5671', '5672'],
+    proto => 'tcp',
+  }
 }
