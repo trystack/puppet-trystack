@@ -1,4 +1,4 @@
-class trystack::control::cinder_ts() {
+class trystack::control::cinder_ts {
 
   if $public_ip == '' { fail('public_ip is empty') }
   if $private_ip == '' { fail('private_ip is empty') }
@@ -57,6 +57,10 @@ class trystack::control::cinder_ts() {
   }
 
   Class['cinder::api'] ~> Service['cinder-backup']
+
+  package{'glusterfs-fuse':
+    ensure => present,
+  }
 
   class { 'cinder::volume::glusterfs':
       glusterfs_shares => [$gluster_shares],

@@ -4,8 +4,10 @@ export OS_USERNAME=admin
 export OS_AUTH_URL=http://<%= @private_ip %>:5000/v2.0/
 export OS_PASSWORD=<%= @admin_password %>
 
-ADMIN_TENANT="7812baa44f5a4fc9871990ff82d88f91"
 
+ADMIN_ROUTER="7812baa44f5a4fc9871990ff82d88f91"
+
+RDO_ROUTER="da71ee18-94fa-4f11-a669-5a5261b153e4"
+ 
 #for i in `neutron router-list | grep -v null | grep -v '\-\-' | tr -s ' ' | cut -d \  -f 2`; do neutron router-gateway-clear $i; done
-for i in `neutron router-list | grep -v null | grep -v ${ADMIN_TENANT} | grep -v '\-\-' | tr -s ' ' | cut -d \  -f 2`; do neutron router-gateway-clear $i; done
-
+for i in `neutron router-list | grep -v null | grep -v ${ADMIN_ROUTER} | grep -v ${RDO_ROUTER} | grep -v '\-\-' | tr -s ' ' | cut -d \  -f 2`; do neutron router-gateway-clear $i; done
