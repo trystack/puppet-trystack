@@ -8,7 +8,7 @@ class trystack::controller {
 
   if $mysql_ip == '' { fail('mysql_ip is empty') }
   if $mysql_root_password == '' { fail('mysql_root_password is empty') }
-  if $amqp_ip == '' { fail('mysql_ip is empty') }
+  if $amqp_ip == '' { fail('amqp_ip is empty') }
 
   if $memcache_ip == '' { fail('memcache_ip is empty') }
   if $neutron_ip == '' { fail('neutron_ip is empty') }
