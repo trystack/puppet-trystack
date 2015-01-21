@@ -1,5 +1,9 @@
 class trystack {
-    file {'/etc/hosts':
-      content=> 'file:///modules/trystack/etc.hosts',
+    stage { 'first':
+      before => Stage['main'],
+    }
+
+    class { "trystack::repo":
+      stage => first,
     }
 }
