@@ -1,6 +1,17 @@
 class trystack::compute {
+  if ($odl_flag != '') and str2bool($odl_flag) { 
+     $ml2_mech_drivers = ['opendaylight']
+     $this_agent = 'opendaylight'
+  }
+  else {
+    $ml2_mech_drivers = ['openvswitch','l2population'] 
+    $this_agent = 'ovs'
+  }
 
+  if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
   if $private_ip == '' { fail('private_ip is empty') }
+  if $odl_control_ip == '' { $odl_control_ip = $private_ip }
+
   if $mysql_ip == '' { fail('mysql_ip is empty') }
   if $amqp_ip == '' { fail('mysql_ip is empty') }
 
@@ -49,8 +60,11 @@ class trystack::compute {
 
     cinder_backend_gluster        => $quickstack::params::cinder_backend_gluster,
 
-    agent_type                   => 'ovs',
+    agent_type                   => $this_agent,
     enable_tunneling             => true,
+
+    ml2_mechanism_drivers        => $ml2_mech_drivers,
+    odl_controller_ip            => $odl_control_ip,
 
     neutron_db_password          => $neutron_db_password,
     neutron_user_password        => $neutron_user_password,
@@ -59,7 +73,7 @@ class trystack::compute {
     #ovs_bridge_mappings          = $quickstack::params::ovs_bridge_mappings,
     #ovs_bridge_uplinks           = $quickstack::params::ovs_bridge_uplinks,
     #ovs_vlan_ranges              = $quickstack::params::ovs_vlan_ranges,
-    ovs_tunnel_iface             => 'em1',
+    ovs_tunnel_iface             => $ovs_tunnel_if,
     ovs_tunnel_network           => '',
     ovs_l2_population            => 'True',
 

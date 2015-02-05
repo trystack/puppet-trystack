@@ -1,22 +1,27 @@
-class trystack::controller {
+class trystack::controller_networker {
   ###use 8081 as a default work around swift service
   if $odl_rest_port == '' {$odl_rest_port = '8081'}
 
-  if ($odl_flag != '') and str2bool($odl_flag) {
+  if ($odl_flag != '') and str2bool($odl_flag) { 
      $ml2_mech_drivers = ['opendaylight']
+     $this_agent = 'opendaylight'
+     class {"opendaylight":
+       odl_rest_port => $odl_rest_port,
+       extra_features => ['odl-base-all', 'odl-aaa-authn', 'odl-restconf', 'odl-nsf-all', 'odl-adsal-northbound', 'odl-mdsal-apidocs', 'odl-ovsdb-openstack', 'odl-ovsdb-northbound', 'odl-dlux-core'],
+     }
   }
   else {
-    $ml2_mech_drivers = ['openvswitch','l2population']
+    $ml2_mech_drivers = ['openvswitch','l2population'] 
+    $this_agent = 'ovs'
   }
-
-
+  if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
   if $admin_email == '' { fail('admin_email is empty') }
   if $admin_password == '' { fail('admin_password is empty') }
 
   if $public_ip == '' { fail('public_ip is empty') }
   if $private_ip == '' { fail('private_ip is empty') }
 
-  if $odl_control_ip == '' { fail('odl_controL_ip is empty, should be the IP of your network node private interface') }
+  if $odl_control_ip == '' { $odl_control_ip = $private_ip }
 
   if $mysql_ip == '' { fail('mysql_ip is empty') }
   if $mysql_root_password == '' { fail('mysql_root_password is empty') }
@@ -55,9 +60,18 @@ class trystack::controller {
   if $swift_shared_secret == '' { fail('swift_shared_secret is empty') }
   if $swift_admin_password == '' { fail('swift_admin_password is empty') }
 
-  class { "quickstack::neutron::controller":
+  class { "quickstack::neutron::controller_networker":
     admin_email                   => $admin_email,
     admin_password                => $admin_password,
+    agent_type                    => $this_agent,
+    enable_tunneling              => true,
+    ovs_tunnel_iface              => $ovs_tunnel_if,
+    ovs_tunnel_network            => '',
+    ovs_tunnel_types              => ['vxlan'],
+    ovs_l2_population             => 'True',
+    external_network_bridge       => 'br-ex',
+    tenant_network_type           => 'vxlan',
+    tunnel_id_ranges              => '1:1000',
     controller_admin_host         => $private_ip,
     controller_priv_host          => $private_ip,
     controller_pub_host           => $public_ip,
@@ -98,8 +112,9 @@ class trystack::controller {
     horizon_ca                    => $quickstack::params::horizon_ca,
     horizon_cert                  => $quickstack::params::horizon_cert,
     horizon_key                   => $quickstack::params::horizon_key,
-
+ 
     ml2_mechanism_drivers         => $ml2_mech_drivers,
+
     #neutron                       => true,
     neutron_metadata_proxy_secret => $neutron_metadata_shared_secret,
     neutron_db_password           => $neutron_db_password,
@@ -107,9 +122,9 @@ class trystack::controller {
 
     nova_db_password              => $nova_db_password,
     nova_user_password            => $nova_user_password,
+
     odl_controller_ip             => $odl_control_ip,
     odl_controller_port           => $odl_rest_port,
-
     swift_shared_secret           => $swift_shared_secret,
     swift_admin_password          => $swift_admin_password,
     swift_ringserver_ip           => '192.168.203.1',
