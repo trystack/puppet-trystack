@@ -1,9 +1,15 @@
 class trystack {
-    stage { 'first':
-      before => Stage['main'],
+    exec {'disable selinux':
+        command => '/usr/sbin/setenforce 0',
+        unless => '/usr/sbin/getenforce | grep Permissive',
+    }
+    include stdlib
+    stage { 'presetup':
+      before => Stage['setup'],
     }
 
     class { "trystack::repo":
-      stage => first,
+     stage => presetup,
     }
+
 }
