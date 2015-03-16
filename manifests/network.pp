@@ -34,7 +34,6 @@ class trystack::network {
 
   class { "quickstack::neutron::networker":
     agent_type                    => $this_agent,
-    ml2_mechanism_drivers         => $ml2_mech_drivers,
     neutron_metadata_proxy_secret => $neutron_metadata_shared_secret,
     neutron_db_password           => $neutron_db_password,
     neutron_user_password         => $neutron_user_password,
@@ -43,7 +42,6 @@ class trystack::network {
 
     controller_priv_host          => $private_ip,
 
-    agent_type                    => 'ovs',
     enable_tunneling              => true,
     ovs_tunnel_iface              => $ovs_tunnel_if,
     ovs_tunnel_network            => '',
