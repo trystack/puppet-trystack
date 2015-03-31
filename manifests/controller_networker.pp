@@ -26,7 +26,9 @@ class trystack::controller_networker {
   if $ha_flag and str2bool($ha_flag) {
     ##Mandatory HA variables
     if !$controllers_ip_array { fail('controllers_ip_array is empty') }
+    $controllers_ip_array = split($controllers_ip_array, ',')
     if !$controllers_hostnames_array { fail('controllers_hostnames_array is empty') }
+    $controllers_hostnames_array = split($controllers_hostnames_array, ',')
     if !$amqp_vip { fail('amqp_vip is empty') }
     if !$private_subnet { fail('private_subnet is empty')}
     if !$cinder_admin_vip { fail('cinder_admin_vip is empty') }
@@ -76,84 +78,16 @@ class trystack::controller_networker {
     if !$nova_db_password { $nova_db_password = $single_password }
     if !$nova_user_password { $nova_user_password = $single_password }
     if !$pcmk_server_addrs {$pcmk_server_addrs = $controllers_ip_array}
-    if !$pcmk_server_names {$pcmk_server_names = ["pcmk-$controllers_hostnames_array[0]", "pcmk-$controllers_hostnames_array[1]", "pcmk-$controllers_hostnames_array[2]"] }
+    if !$pcmk_server_names {$pcmk_server_names = ["pcmk-${controllers_hostnames_array[0]}", "pcmk-${controllers_hostnames_array[1]}", "pcmk-${controllers_hostnames_array[2]}"] }
     if !$rbd_secret_uuid { $rbd_secret_uuid = '3b519746-4021-4f72-957e-5b9d991723be' }
 
     ##we assume here that if not provided, the first controller is where ODL will reside
     ##this is fine for now as we will replace ODL with ODL HA when it is ready
     if $odl_control_ip == '' { $odl_control_ip =  $controllers_ip_array[0] }
 
+
     class { "quickstack::openstack_common": }
-
-    class { "quickstack::pacemaker::ceilometer":
-      ceilometer_metering_secret => $single_password,
-    }
-
-    class { "quickstack::pacemaker::cinder":
-      backend_rbd     => true,
-      rbd_secret_uuid => $rbd_secret_uuid,
-      use_syslog      => true,
-      verbose         => true,
-      volume          => true,
-    }
-
-    class { "quickstack::pacemaker::common": }
-
-    class { "quickstack::pacemaker::galera": 
-      mysqlrootpw             => $mysql_root_password,
-      wsrep_cluster_members   => $controllers_ip_array,
-    }
-
-    class { "quickstack::pacemaker::glance": 
-      backend         => 'rbd',
-      debug           => true,
-      pcmk_fs_manage  => 'false',
-      use_syslog      => true,
-      verbose         => true
-    }
-
-    class { "quickstack::pacemaker::heat": }
-
-    class { "quickstack::pacemaker::horizon":
-      horizon_ca       =>  '/etc/ipa/ca.crt',
-      horizon_cert     =>  '/etc/pki/tls/certs/PUB_HOST-horizon.crt',
-      horizon_key      =>  '/etc/pki/tls/private/PUB_HOST-horizon.key',
-      secret_key       =>  $horizon_secret,
-      verbose          =>  'true',
-    }
-
-    class { "quickstack::pacemaker::keystone":
-      admin_email         =>  $admin_email,
-      admin_password      =>  $admin_password,
-      admin_token         =>  $keystone_admin_token,
-      cinder              =>  'true',
-      heat                =>  'false',
-      heat_cfn            =>  'false',
-      keystonerc          =>  'true',
-      use_syslog          =>  'true',
-      verbose             =>  'true',
-    }
-
-    class { "quickstack::pacemaker::load_balancer": }
-    class { "quickstack::pacemaker::memcached": }
-
-    class { "quickstack::pacemaker::neutron":
-      agent_type               =>  $this_agent,
-      enable_tunneling         =>  'true',
-      ml2_mechanism_drivers    =>  $ml2_mech_drivers,
-      ml2_network_vlan_ranges  =>  ["physnet1:10:50"],
-      odl_controller_ip        =>  $odl_control_ip,
-      odl_controller_port      =>  $odl_rest_port,
-      ovs_tunnel_iface         =>  $ovs_tunnel_if,
-      ovs_tunnel_types         =>  ["vxlan"],
-      verbose                  =>  'true',
-    }
-
-    class { "quickstack::pacemaker::nosql": }
-    class { "quickstack::pacemaker::nova":
-      neutron_metadata_proxy_secret => $neutron_metadata_shared_secret, 
-    }
-
+    ->
     class { "quickstack::pacemaker::params":
       amqp_password            => $amqp_password,
       amqp_username            => $amqp_username,
@@ -218,10 +152,85 @@ class trystack::controller_networker {
       pcmk_server_names        => $pcmk_server_names,
       private_iface            => $ovs_tunnel_if,
     }
-
-    class { "quickstack::pacemaker::qpid": }
+    ->
+    class { "quickstack::pacemaker::common": }
+    ->
+    class { "quickstack::pacemaker::load_balancer": }
+    ->
+    class { "quickstack::pacemaker::galera":
+      mysql_root_password     => $mysql_root_password,
+      wsrep_cluster_members   => $controllers_ip_array,
+    }
+    ->
+     class { "quickstack::pacemaker::qpid": }
+    ->
     class { "quickstack::pacemaker::rabbitmq": }
+    ->
+    class { "quickstack::pacemaker::keystone":
+      admin_email         =>  $admin_email,
+      admin_password      =>  $admin_password,
+      admin_token         =>  $keystone_admin_token,
+      cinder              =>  'true',
+      heat                =>  'false',
+      heat_cfn            =>  'false',
+      keystonerc          =>  'true',
+      use_syslog          =>  'true',
+      verbose             =>  'true',
+    }
+    ->
     class { "quickstack::pacemaker::swift": }
+    ->
+    class { "quickstack::pacemaker::glance":
+      backend         => 'rbd',
+      debug           => true,
+      pcmk_fs_manage  => 'false',
+      use_syslog      => true,
+      verbose         => true
+    }
+    ->
+    class { "quickstack::pacemaker::nova":
+      neutron_metadata_proxy_secret => $neutron_metadata_shared_secret,
+    }
+    ->
+    class { "quickstack::pacemaker::cinder":
+      backend_rbd     => true,
+      rbd_secret_uuid => $rbd_secret_uuid,
+      use_syslog      => true,
+      verbose         => true,
+      volume          => true,
+    }
+    ->
+    class { "quickstack::pacemaker::heat": }
+    ->
+    class { "quickstack::pacemaker::constraints": }
+
+    class { "quickstack::pacemaker::nosql": }
+
+    class { "quickstack::pacemaker::memcached": }
+
+    class { "quickstack::pacemaker::ceilometer":
+      ceilometer_metering_secret => $single_password,
+    }
+
+    class { "quickstack::pacemaker::horizon":
+      horizon_ca       =>  '/etc/ipa/ca.crt',
+      horizon_cert     =>  '/etc/pki/tls/certs/PUB_HOST-horizon.crt',
+      horizon_key      =>  '/etc/pki/tls/private/PUB_HOST-horizon.key',
+      secret_key       =>  $horizon_secret,
+      verbose          =>  'true',
+    }
+
+    class { "quickstack::pacemaker::neutron":
+      agent_type               =>  $this_agent,
+      enable_tunneling         =>  'true',
+      ml2_mechanism_drivers    =>  $ml2_mech_drivers,
+      ml2_network_vlan_ranges  =>  ["physnet1:10:50"],
+      odl_controller_ip        =>  $odl_control_ip,
+      odl_controller_port      =>  $odl_rest_port,
+      ovs_tunnel_iface         =>  $ovs_tunnel_if,
+      ovs_tunnel_types         =>  ["vxlan"],
+      verbose                  =>  'true',
+    }
 
   } else {
 
