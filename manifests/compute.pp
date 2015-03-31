@@ -11,8 +11,6 @@ class trystack::compute {
   ##Common Parameters
   if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
 
-  if $admin_password == '' { fail('admin_password is empty') }
-
   if !$rbd_secret_uuid { $rbd_secret_uuid = '3b519746-4021-4f72-957e-5b9d991723be' }
   if !$private_subnet { fail('private_subnet is empty')}
   if !$ceph_public_network { $ceph_public_network = $private_subnet }
@@ -28,6 +26,7 @@ class trystack::compute {
   if !$single_username { $single_username = 'octopus' }
   if !$single_password { $single_password = 'octopus' }
 
+  if !$admin_password { $admin_password = $single_password }
   if !$neutron_db_password  { $neutron_db_password = $single_password }
   if !$neutron_user_password  { $neutron_user_password = $single_password }
 
@@ -42,6 +41,7 @@ class trystack::compute {
      if !$nova_db_password { $nova_db_password = $single_password }
      if !$nova_user_password { $nova_user_password = $single_password }
      if !$controllers_ip_array { fail('controllers_ip_array is empty') }
+     if !$controllers_hostnames_array { fail('controllers_hostnames_array is empty') }
      if !$odl_control_ip  { $odl_control_ip =  $controllers_ip_array[0] }
      if !$db_vip { fail('db_vip is empty') }
      $mysql_ip = $db_vip
@@ -50,7 +50,7 @@ class trystack::compute {
      if !$amqp_username { $amqp_user = $single_username }
      if !$amqp_password { $amqp_pass = $single_password }
      if !$ceph_mon_initial_members { $ceph_mon_initial_members = $controllers_hostnames_array }
-     if !$ceph_mon_host { $ceph_mon_host= $controllers_ip_array }
+     if !$ceph_mon_host { $ceph_mon_host = $controllers_ip_array }
      if !$neutron_private_vip { fail('neutron_private_vip is empty') }
   } else {
   ##non HA params
