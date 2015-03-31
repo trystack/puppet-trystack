@@ -3,12 +3,7 @@ class trystack::controller_networker {
   if ($odl_flag != '') and str2bool($odl_flag) { 
      $ml2_mech_drivers = ['opendaylight']
      $this_agent = 'opendaylight'
-     class {"opendaylight":
-       features       => ['config', 'standard', 'region', 'package', 'kar', 'ssh', 'management', 'odl-base-all', 'odl-aaa-authn', 'odl-restconf', 'odl-ovsdb-library', 'odl-ovsdb-plugin', 'odl-ovsdb-openstack', 'odl-ovsdb-northbound'],
-       odl_rest_port  => $odl_rest_port,
-     }
-  }
-  else {
+  } else {
     $ml2_mech_drivers = ['openvswitch','l2population'] 
     $this_agent = 'ovs'
   }
@@ -56,6 +51,8 @@ class trystack::controller_networker {
 
 
     ##Optional HA variables
+    if !$amqp_username  { $amqp_username = $single_username }
+    if !$amqp_password  { $amqp_password = $single_password }
     if !$ceph_fsid { $ceph_fsid = '904c8491-5c16-4dae-9cc3-6ce633a7f4cc' }
     if !$ceph_images_key { $ceph_images_key = 'AQAfHBdUKLnUFxAAtO7WPKQZ8QfEoGqH0CLd7A==' }
     if !$ceph_mon_host { $ceph_mon_host= $controllers_ip_array }
@@ -78,6 +75,11 @@ class trystack::controller_networker {
     if !$nova_user_password { $nova_user_password = $single_password }
     if !$pcmk_server_addrs {$pcmk_server_addrs = $controllers_ip_array}
     if !$pcmk_server_names {$pcmk_server_names = ["pcmk-$controllers_hostnames_array[0]", "pcmk-$controllers_hostnames_array[1]", "pcmk-$controllers_hostnames_array[2]"] }
+    if !$rbd_secret_uuid { $rbd_secret_uuid = '3b519746-4021-4f72-957e-5b9d991723be' }
+
+    ##we assume here that if not provided, the first controller is where ODL will reside
+    ##this is fine for now as we will replace ODL with ODL HA when it is ready
+    if $odl_control_ip == '' { $odl_control_ip =  $controllers_ip_array[0] }
 
     class { "quickstack::openstack_common": }
 
@@ -151,8 +153,8 @@ class trystack::controller_networker {
     }
 
     class { "quickstack::pacemaker::params":
-      amqp_password            => $single_password,
-      amqp_username            => $single_username,
+      amqp_password            => $amqp_password,
+      amqp_username            => $amqp_username,
       amqp_vip                 => $amqp_vip,
       ceph_cluster_network     => $private_subnet,
       ceph_fsid                => $ceph_fsid,
