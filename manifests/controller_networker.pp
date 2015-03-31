@@ -7,27 +7,28 @@ class trystack::controller_networker {
     $ml2_mech_drivers = ['openvswitch','l2population'] 
     $this_agent = 'ovs'
   }
+
+  ##Mandatory Common variables
   if $admin_email == '' { fail('admin_email is empty') }
   if $admin_password == '' { fail('admin_password is empty') }
-  if $keystone_admin_token == '' { fail('keystone_admin_token is empty') }
-  if $neutron_metadata_shared_secret == '' { fail('neutron_metadata_shared_secret is empty') }
   if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
-  if $mysql_root_password == '' { fail('mysql_root_password is empty') }
 
   ##Most users will only care about a single user/password for all services
   ##so lets create one variable that can be used instead of separate usernames/passwords
   if !$single_username { $single_username = 'octopus' }
   if !$single_password { $single_password = 'octopus' }
 
+  if !$keystone_admin_token { $keystone_admin_token = $single_password }
+  if !$neutron_metadata_shared_secret { $neutron_metadata_shared_secret = $single_password }
+  if !$mysql_root_password { $mysql_root_password = $single_password }
+
   ##Check for HA, if not leave old functionality alone
   if $ha_flag {
     ##Mandatory HA variables
     if !$controllers_ip_array { fail('controllers_ip_array is empty') }
     if !$controllers_hostnames_array { fail('controllers_hostnames_array is empty') }
-    if !$horizon_secret { fail('horizon_secret is empty') }
     if !$amqp_vip { fail('amqp_vip is empty') }
     if !$private_subnet { fail('private_subnet is empty')}
-    if !$public_subnet  { fail('public_subnet is empty') }
     if !$cinder_admin_vip { fail('cinder_admin_vip is empty') }
     if !$cinder_private_vip { fail('cinder_private_vip is empty') }
     if !$cinder_public_vip { fail('cinder_public_vip is empty') }
@@ -64,6 +65,7 @@ class trystack::controller_networker {
     if !$cinder_db_password { $cinder_db_password = $single_password }
     if !$cinder_user_password { $cinder_user_password = $single_password }
     if !$cluster_control_ip { $cluster_control_ip = $controllers_ip_array[0] }
+    if !$horizon_secret { $horizon_secret = $single_password }
     if !$glance_db_password { $glance_db_password = $single_password }
     if !$keystone_db_password { $keystone_db_password = $single_password }
     if !$keystone_user_password { $keystone_user_password = $single_password }
