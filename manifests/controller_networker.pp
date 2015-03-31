@@ -23,7 +23,7 @@ class trystack::controller_networker {
   if !$mysql_root_password { $mysql_root_password = $single_password }
 
   ##Check for HA, if not leave old functionality alone
-  if $ha_flag {
+  if $ha_flag and str2bool($ha_flag) {
     ##Mandatory HA variables
     if !$controllers_ip_array { fail('controllers_ip_array is empty') }
     if !$controllers_hostnames_array { fail('controllers_hostnames_array is empty') }
