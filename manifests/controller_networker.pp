@@ -10,7 +10,6 @@ class trystack::controller_networker {
 
   ##Mandatory Common variables
   if $admin_email == '' { fail('admin_email is empty') }
-  if $admin_password == '' { fail('admin_password is empty') }
   if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
 
   ##Most users will only care about a single user/password for all services
@@ -21,6 +20,7 @@ class trystack::controller_networker {
   if !$keystone_admin_token { $keystone_admin_token = $single_password }
   if !$neutron_metadata_shared_secret { $neutron_metadata_shared_secret = $single_password }
   if !$mysql_root_password { $mysql_root_password = $single_password }
+  if !$admin_password { $admin_password = $single_password }
 
   ##Check for HA, if not leave old functionality alone
   if $ha_flag and str2bool($ha_flag) {
