@@ -8,57 +8,110 @@ class trystack::compute {
     $this_agent = 'ovs'
   }
 
+  ##Common Parameters
   if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
-  if $private_ip == '' { fail('private_ip is empty') }
-  if $odl_control_ip == '' { $odl_control_ip = $private_ip }
-
-  if $mysql_ip == '' { fail('mysql_ip is empty') }
-  if $amqp_ip == '' { fail('mysql_ip is empty') }
 
   if $admin_password == '' { fail('admin_password is empty') }
 
-  if $nova_user_password == '' { fail('nova_user_password is empty') }
-  if $nova_db_password == '' { fail('nova_db_password is empty') }
+  if !$rbd_secret_uuid { $rbd_secret_uuid = '3b519746-4021-4f72-957e-5b9d991723be' }
+  if !$private_subnet { fail('private_subnet is empty')}
+  if !$ceph_public_network { $ceph_public_network = $private_subnet }
+  if !$ceph_fsid { $ceph_fsid = '904c8491-5c16-4dae-9cc3-6ce633a7f4cc' }
+  if !$ceph_images_key { $ceph_images_key = 'AQAfHBdUKLnUFxAAtO7WPKQZ8QfEoGqH0CLd7A==' }
+  if !$ceph_osd_journal_size { $ceph_osd_journal_size = '1000' }
+  if !$ceph_osd_pool_size { $ceph_osd_pool_size = '1' }
+  if !$ceph_volumes_key { $ceph_volumes_key = 'AQAfHBdUsFPTHhAAfqVqPq31FFCvyyO7oaOQXw==' }
 
-  if $neutron_user_password == '' { fail('nova_user_password is empty') }
-  if $neutron_db_password == '' { fail('nova_db_password is empty') }
 
-  if $ceilometer_user_password == '' { fail('ceilometer_user_password is empty') }
-  if $ceilometer_metering_secret == '' { fail('ceilometer_user_password is empty') }
+  ##Most users will only care about a single user/password for all services
+  ##so lets create one variable that can be used instead of separate usernames/passwords
+  if !$single_username { $single_username = 'octopus' }
+  if !$single_password { $single_password = 'octopus' }
+
+  if !$neutron_db_password  { $neutron_db_password = $single_password }
+  if !$neutron_user_password  { $neutron_user_password = $single_password }
+
+  if !$ceilometer_user_password { $ceilometer_user_password = $single_password }
+  if !$ceilometer_metering_secret { $ceilometer_metering_secret = $single_password }
+
+  ##HA Global params
+  if $ha_flag {
+     if !$keystone_private_vip { fail('keystone_private_vip is empty') }
+     if !$glance_private_vip { fail('glance_private_vip is empty') }
+     if !$nova_private_vip { fail('nova_private_vip is empty') }
+     if !$nova_db_password { $nova_db_password = $single_password }
+     if !$nova_user_password { $nova_user_password = $single_password }
+     if !$controllers_ip_array { fail('controllers_ip_array is empty') }
+     if !$odl_control_ip  { $odl_control_ip =  $controllers_ip_array[0] }
+     if !$db_vip { fail('db_vip is empty') }
+     $mysql_ip = $db_vip
+     if !$amqp_vip { fail('amqp_vip is empty') }
+     $amqp_ip = $amqp_vip
+     if !$amqp_username { $amqp_user = $single_username }
+     if !$amqp_password { $amqp_pass = $single_password }
+     if !$ceph_mon_initial_members { $ceph_mon_initial_members = $controllers_hostnames_array }
+     if !$ceph_mon_host { $ceph_mon_host= $controllers_ip_array }
+     if !$neutron_private_vip { fail('neutron_private_vip is empty') }
+  } else {
+  ##non HA params
+     if !$private_ip { fail('private_ip is empty') }
+     $keystone_private_vip = $private_ip
+     $glance_private_vip   = $private_ip
+     $nova_private_vip     = $private_ip
+     $neutron_private_vip  = $private_ip
+     if !$nova_db_password { fail('nova_db_password is empty') }
+     if !$nova_user_password { fail('nova_user_password is empty') }
+     if !$odl_control_ip { $odl_control_ip = $private_ip }
+     if !$mysql_ip { $mysql_ip = $private_ip }
+     if !$amqp_ip { $amqp_ip = $private_ip }
+     if !$amqp_username { $amqp_user = 'guest' }
+     if !$amqp_password { $amqp_pass = 'guest' }
+     if !$ceph_mon_host { $ceph_mon_host= ["$private_ip"] }
+     if !$ceph_mon_initial_members { $ceph_mon_initial_members = ["$::hostname"] }
+  }
 
   class { "quickstack::neutron::compute":
-    auth_host                    => $private_ip,
-    glance_host                  => $private_ip,
+    auth_host                    => $keystone_private_vip,
+    glance_host                  => $glance_private_vip,
     libvirt_images_rbd_pool      => 'volumes',
     libvirt_images_rbd_ceph_conf => '/etc/ceph/ceph.conf',
     libvirt_inject_password      => 'false',
     libvirt_inject_key           => 'false',
     libvirt_images_type          => 'rbd',
-    nova_host                    => $private_ip,
-    nova_db_password              => $nova_db_password,
-    nova_user_password            => $nova_user_password,
+    nova_host                    => $nova_private_vip,
+    nova_db_password             => $nova_db_password,
+    nova_user_password           => $nova_user_password,
     private_network              => '',
-    private_iface                => '',
+    private_iface                => $ovs_tunnel_if,
     private_ip                   => '',
     rbd_user                     => 'volumes',
-    rbd_secret_uuid              => '',
+    rbd_secret_uuid              => $rbd_secret_uuid,
     network_device_mtu           => $quickstack::params::network_device_mtu,
 
-    admin_password                => $admin_password,
-    ssl                           => false,
+    admin_password               => $admin_password,
+    ssl                          => false,
 
-    mysql_host                    => $mysql_ip,
-    mysql_ca                     => $quickstack::params::mysql_ca,
-    amqp_host                     => $amqp_ip,
-    amqp_username                 => 'guest',
-    amqp_password                 => 'guest',
-    #amqp_nssdb_password           => $quickstack::params::amqp_nssdb_password,
+    mysql_host                   => $mysql_ip,
+    mysql_ca                     =>  '/etc/ipa/ca.crt',
+    amqp_host                    => $amqp_ip,
+    amqp_username                => $amqp_username,
+    amqp_password                => $amqp_password,
 
-    ceilometer                    => 'true',
-    ceilometer_metering_secret    => $ceilometer_metering_secret,
-    ceilometer_user_password      => $ceilometer_user_password,
+    ceilometer                   => 'false',
+    ceilometer_metering_secret   => $ceilometer_metering_secret,
+    ceilometer_user_password     => $ceilometer_user_password,
 
-    cinder_backend_gluster        => $quickstack::params::cinder_backend_gluster,
+    cinder_backend_gluster       => $quickstack::params::cinder_backend_gluster,
+    cinder_backend_rbd           => 'true',
+    glance_backend_rbd           => 'true',
+    ceph_cluster_network         => $ceph_public_network,
+    ceph_fsid                    => $ceph_fsid,
+    ceph_images_key              => $ceph_images_key,
+    ceph_mon_host                => $ceph_mon_host,
+    ceph_mon_initial_members     => $ceph_mon_initial_members,
+    ceph_osd_pool_default_size   => $ceph_osd_pool_size,
+    ceph_osd_journal_size        => $ceph_osd_journal_size,
+    ceph_volumes_key             => $ceph_volumes_key,
 
     agent_type                   => $this_agent,
     enable_tunneling             => true,
@@ -68,21 +121,17 @@ class trystack::compute {
 
     neutron_db_password          => $neutron_db_password,
     neutron_user_password        => $neutron_user_password,
-    neutron_host                 => $private_ip,
+    neutron_host                 => $neutron_private_vip,
 
-    #ovs_bridge_mappings          = $quickstack::params::ovs_bridge_mappings,
-    #ovs_bridge_uplinks           = $quickstack::params::ovs_bridge_uplinks,
-    #ovs_vlan_ranges              = $quickstack::params::ovs_vlan_ranges,
     ovs_tunnel_iface             => $ovs_tunnel_if,
     ovs_tunnel_network           => '',
-    ovs_l2_population            => 'True',
+    ovs_l2_population            => 'false',
 
     tenant_network_type          => 'vxlan',
     tunnel_id_ranges             => '1:1000',
-    #ovs_vxlan_udp_port           = $quickstack::params::ovs_vxlan_udp_port,
     ovs_tunnel_types             => ['vxlan'],
 
-    verbose                      => $quickstack::params::verbose,
+    verbose                      => 'true',
     security_group_api           => 'neutron',
 
   }
