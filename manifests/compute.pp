@@ -49,8 +49,8 @@ class trystack::compute {
      $mysql_ip = $db_vip
      if !$amqp_vip { fail('amqp_vip is empty') }
      $amqp_ip = $amqp_vip
-     if !$amqp_username { $amqp_user = $single_username }
-     if !$amqp_password { $amqp_pass = $single_password }
+     if !$amqp_username { $amqp_username = $single_username }
+     if !$amqp_password { $amqp_password = $single_password }
      if !$ceph_mon_initial_members { $ceph_mon_initial_members = $controllers_hostnames_array }
      if !$ceph_mon_host { $ceph_mon_host = $controllers_ip_array }
      if !$neutron_private_vip { fail('neutron_private_vip is empty') }
@@ -66,8 +66,8 @@ class trystack::compute {
      if !$odl_control_ip { $odl_control_ip = $private_ip }
      if !$mysql_ip { $mysql_ip = $private_ip }
      if !$amqp_ip { $amqp_ip = $private_ip }
-     if !$amqp_username { $amqp_user = 'guest' }
-     if !$amqp_password { $amqp_pass = 'guest' }
+     if !$amqp_username { $amqp_username = 'guest' }
+     if !$amqp_password { $amqp_password = 'guest' }
      if !$ceph_mon_host { $ceph_mon_host= ["$private_ip"] }
      if !$ceph_mon_initial_members { $ceph_mon_initial_members = ["$::hostname"] }
   }
