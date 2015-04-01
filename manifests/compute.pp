@@ -42,6 +42,8 @@ class trystack::compute {
      if !$nova_user_password { $nova_user_password = $single_password }
      if !$controllers_ip_array { fail('controllers_ip_array is empty') }
      if !$controllers_hostnames_array { fail('controllers_hostnames_array is empty') }
+     $controllers_ip_array = split($controllers_ip_array, ',')
+     $controllers_hostnames_array = split($controllers_hostnames_array, ',')
      if !$odl_control_ip  { $odl_control_ip =  $controllers_ip_array[0] }
      if !$db_vip { fail('db_vip is empty') }
      $mysql_ip = $db_vip
