@@ -26,8 +26,10 @@ class trystack::controller_networker {
   if $ha_flag and str2bool($ha_flag) {
     ##Mandatory HA variables
     if !$controllers_ip_array { fail('controllers_ip_array is empty') }
+    $controllers_ip_array_str = $controllers_ip_array
     $controllers_ip_array = split($controllers_ip_array, ',')
     if !$controllers_hostnames_array { fail('controllers_hostnames_array is empty') }
+    $controllers_hostnames_array_str = $controllers_hostnames_array
     $controllers_hostnames_array = split($controllers_hostnames_array, ',')
     if !$amqp_vip { fail('amqp_vip is empty') }
     if !$private_subnet { fail('private_subnet is empty')}
@@ -80,12 +82,30 @@ class trystack::controller_networker {
     if !$pcmk_server_addrs {$pcmk_server_addrs = $controllers_ip_array}
     if !$pcmk_server_names {$pcmk_server_names = ["pcmk-${controllers_hostnames_array[0]}", "pcmk-${controllers_hostnames_array[1]}", "pcmk-${controllers_hostnames_array[2]}"] }
     if !$rbd_secret_uuid { $rbd_secret_uuid = '3b519746-4021-4f72-957e-5b9d991723be' }
+    if !$storage_iface { $storage_iface = $ovs_tunnel_if }
 
     ##we assume here that if not provided, the first controller is where ODL will reside
     ##this is fine for now as we will replace ODL with ODL HA when it is ready
     if $odl_control_ip == '' { $odl_control_ip =  $controllers_ip_array[0] }
 
+    ###find interface ip of storage network
+    $osd_ip = find_ip("",
+                      "$storage_iface",
+                      "")
 
+    class { "trystack::ceph_deploy":
+      fsid                     => $ceph_fsid,
+      osd_pool_default_size    => $ceph_osd_pool_size,
+      osd_pool_default_size    => $ceph_osd_journal_size,
+      mon_initial_members      => $controllers_hostnames_array_str,
+      mon_host                 => $controllers_ip_array_str,
+      osd_ip                   => $osd_ip,
+      public_network           => $ceph_public_network,
+      cluster_network          => $ceph_public_network,
+      images_key               => $ceph_images_key,
+      volumes_key              => $ceph_volumes_key,
+    }
+    ->
     class { "quickstack::openstack_common": }
     ->
     class { "quickstack::pacemaker::params":
