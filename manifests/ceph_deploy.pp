@@ -47,12 +47,14 @@ class trystack::ceph_deploy (
         cap_mon => 'allow *',
         cap_osd => 'allow *',
         cap_mds => 'allow',
+        mode    => '0644',
   }
   ceph::key { 'client.images':
         secret  => $images_key,
         cap_mon => 'allow r',
         cap_osd => 'allow class-read object_prefix rbd_children, allow rwx pool=images',
         inject  => true,
+        mode    => '0644',
   }
 
   ceph::key { 'client.volumes':
@@ -60,6 +62,7 @@ class trystack::ceph_deploy (
         cap_mon => 'allow r',
         cap_osd => 'allow class-read object_prefix rbd_children, allow rwx pool=volumes',
         inject  => true,
+        mode    => '0644',
   }
   ceph::key { 'client.bootstrap-osd':
         secret  => $boostrap_key,
@@ -68,5 +71,12 @@ class trystack::ceph_deploy (
   }
   ->
   ceph::osd { '/osd0': } 
-   
+  ->
+  exec { 'create volumes pool':
+        command => "/usr/bin/ceph osd pool create volumes $osd_pool_default_pg_num",
+  }
+  ->
+  exec { 'create images pool':
+        command => "/usr/bin/ceph osd pool create images $osd_pool_default_pg_num",
+  }
 }
