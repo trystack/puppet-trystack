@@ -96,7 +96,7 @@ class trystack::controller_networker {
     class { "trystack::ceph_deploy":
       fsid                     => $ceph_fsid,
       osd_pool_default_size    => $ceph_osd_pool_size,
-      osd_pool_default_size    => $ceph_osd_journal_size,
+      osd_journal_size         => $ceph_osd_journal_size,
       mon_initial_members      => $controllers_hostnames_array_str,
       mon_host                 => $controllers_ip_array_str,
       osd_ip                   => $osd_ip,
