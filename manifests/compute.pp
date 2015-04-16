@@ -9,8 +9,6 @@ class trystack::compute {
   }
 
   ##Common Parameters
-  if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
-
   if !$rbd_secret_uuid { $rbd_secret_uuid = '3b519746-4021-4f72-957e-5b9d991723be' }
   if !$private_subnet { fail('private_subnet is empty')}
   if !$ceph_public_network { $ceph_public_network = $private_subnet }
@@ -35,6 +33,7 @@ class trystack::compute {
 
   ##HA Global params
   if $ha_flag {
+     if $private_network == '' { fail('private_network is empty') }
      if !$keystone_private_vip { fail('keystone_private_vip is empty') }
      if !$glance_private_vip { fail('glance_private_vip is empty') }
      if !$nova_private_vip { fail('nova_private_vip is empty') }
@@ -54,8 +53,13 @@ class trystack::compute {
      if !$ceph_mon_initial_members { $ceph_mon_initial_members = $controllers_hostnames_array }
      if !$ceph_mon_host { $ceph_mon_host = $controllers_ip_array }
      if !$neutron_private_vip { fail('neutron_private_vip is empty') }
+
+    ##Find private interface
+    $ovs_tunnel_if = get_nic_from_network("$private_network")
+
   } else {
   ##non HA params
+     if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
      if !$private_ip { fail('private_ip is empty') }
      $keystone_private_vip = $private_ip
      $glance_private_vip   = $private_ip
