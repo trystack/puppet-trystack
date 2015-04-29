@@ -73,6 +73,7 @@ class trystack::controller_networker {
     if !$cluster_control_ip { $cluster_control_ip = $controllers_ip_array[0] }
     if !$horizon_secret { $horizon_secret = $single_password }
     if !$glance_db_password { $glance_db_password = $single_password }
+    if !$glance_user_password { $glance_user_password = $single_password }
     if !$keystone_db_password { $keystone_db_password = $single_password }
     if !$keystone_user_password { $keystone_user_password = $single_password }
     if !$lb_backend_server_addrs { $lb_backend_server_addrs = $controllers_ip_array }
