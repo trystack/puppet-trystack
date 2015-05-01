@@ -19,4 +19,13 @@ class trystack {
     package { "python-rados":
      ensure => latest,
     } 
+
+    package { 'openvswitch':
+     ensure  => installed,
+    }
+    ->
+    service {'openvswitch':
+     ensure  => 'running',
+    }
+
 }

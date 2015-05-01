@@ -110,6 +110,10 @@ class trystack::controller_networker {
                       "$storage_iface",
                       "")
 
+    if ($odl_flag != '') and str2bool($odl_flag) and ($external_network_flag != '') and str2bool($external_network_flag) {
+      class { "trystack::external_net_setup": }
+    }
+
     class { "trystack::ceph_deploy":
       fsid                     => $ceph_fsid,
       osd_pool_default_size    => $ceph_osd_pool_size,
@@ -325,6 +329,10 @@ class trystack::controller_networker {
     if $swift_shared_secret == '' { fail('swift_shared_secret is empty') }
     if $swift_admin_password == '' { fail('swift_admin_password is empty') }
 
+    if !$amqp_username { $amqp_username = $single_username }
+    if !$amqp_password { $amqp_password = $single_password }
+
+
     class { "quickstack::neutron::controller_networker":
       admin_email                   => $admin_email,
       admin_password                => $admin_password,
@@ -348,8 +356,8 @@ class trystack::controller_networker {
       mysql_root_password           => $mysql_root_password,
       #amqp_provider                 => $amqp_provider,
       amqp_host                     => $amqp_ip,
-      amqp_username                 => 'guest',
-      amqp_password                 => 'guest',
+      amqp_username                 => $amqp_username,
+      amqp_password                 => $amqp_password,
       #amqp_nssdb_password           => $quickstack::params::amqp_nssdb_password,
 
       keystone_admin_token          => $keystone_admin_token,
