@@ -110,6 +110,13 @@ class trystack::controller_networker {
                       "$storage_iface",
                       "")
 
+    if ($external_network_flag != '') and str2bool($external_network_flag) {
+      class { "trystack::external_net_presetup":
+        stage   => presetup,
+        require => Class['trystack::repo'],
+      }
+    }
+
     class { "trystack::ceph_deploy":
       fsid                     => $ceph_fsid,
       osd_pool_default_size    => $ceph_osd_pool_size,
