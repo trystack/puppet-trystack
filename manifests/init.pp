@@ -1,8 +1,4 @@
 class trystack {
-    exec {'disable selinux':
-        command => '/usr/sbin/setenforce 0',
-        unless => '/usr/sbin/getenforce | grep Permissive',
-    }
     
     include stdlib
     stage { 'presetup':
@@ -20,12 +16,10 @@ class trystack {
      ensure => latest,
     } 
 
-    package { 'openvswitch':
-     ensure  => installed,
+    if ($external_network_flag != '') and str2bool($external_network_flag) {
+      class { "trystack::external_net_presetup":
+        stage   => presetup,
+        require => Class['trystack::repo'],
+      }
     }
-    ->
-    service {'openvswitch':
-     ensure  => 'running',
-    }
-
 }

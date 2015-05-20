@@ -110,10 +110,6 @@ class trystack::controller_networker {
                       "$storage_iface",
                       "")
 
-    if ($odl_flag != '') and str2bool($odl_flag) and ($external_network_flag != '') and str2bool($external_network_flag) {
-      class { "trystack::external_net_setup": }
-    }
-
     class { "trystack::ceph_deploy":
       fsid                     => $ceph_fsid,
       osd_pool_default_size    => $ceph_osd_pool_size,
@@ -285,6 +281,10 @@ class trystack::controller_networker {
       ovs_tunnel_iface         =>  $ovs_tunnel_if,
       ovs_tunnel_types         =>  ["vxlan"],
       verbose                  =>  'true',
+    }
+
+    if ($external_network_flag != '') and str2bool($external_network_flag) {
+      class { "trystack::external_net_setup": }
     }
 
   } else {

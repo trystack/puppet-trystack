@@ -19,4 +19,31 @@ class trystack::repo {
     }
 
   }
+
+    exec {'disable selinux':
+        command => '/usr/sbin/setenforce 0',
+        unless => '/usr/sbin/getenforce | grep Permissive',
+    }
+    ->
+    service { 'NetworkManager':
+      ensure => "stopped",
+      enable => "false",
+    }
+    ->
+    service { "network":
+      ensure => "running",
+      enable => "true",
+      hasrestart => true,
+      restart => '/usr/bin/systemctl restart network',
+    }
+
+    ->
+    package { 'openvswitch':
+     ensure  => installed,
+    }
+    ->
+    service {'openvswitch':
+     ensure  => 'running',
+    }
+
 }

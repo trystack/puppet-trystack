@@ -15,83 +15,13 @@ class trystack::external_net_setup {
   $public_nic_ip = get_ip_from_nic("$public_nic")
   $public_nic_netmask = get_netmask_from_nic("$public_nic")
 
-  #reconfigure public interface to be ovsport
-  augeas { "main-$public_nic":
-        context => "/files/etc/sysconfig/network-scripts/ifcfg-$public_nic",
-        changes => [
-                "rm IPADDR",
-                "rm NETMASK",
-                "rm GATEWAY",
-                "rm DNS1",
-                "rm BOOTPROTO",
-                "set ONBOOT yes",
-                "set TYPE OVSPort",
-                "set OVS_BRIDGE br-ex",
-                "set PROMISC yes"
-
-        ],
-        before  => Class["quickstack::pacemaker::params"],
-        require => Package["openvswitch"],
-  }
-
-  ~>
-  exec {"ifdown $public_nic":
-        path         => "/usr/sbin",
-        refreshonly  => true,
-  }
-  ~>
-  exec {"ifup $public_nic":
-        path         => "/usr/sbin",
-        refreshonly  => true,
-  }
-
-  #create br-ex interface
-  augeas { "main-br-ex ":
-        context => '/files/etc/sysconfig/network-scripts/ifcfg-br-ex',
-        changes => [
-                "set DEVICE br-ex",
-                "set DEVICETYPE ovs",
-                "set IPADDR '$public_nic_ip'",
-                "set NETMASK '$public_nic_netmask'",
-                "set GATEWAY '$public_gateway'",
-                "set DNS1 '$public_dns'",
-                "set BOOTPROTO static",
-                "set ONBOOT yes",
-                "set TYPE OVSBridge",
-                "set PROMISC yes"
-
-        ],
-        before  => Class["quickstack::pacemaker::params"],
-        require => Package["openvswitch"]
-  }
-
-  ~>
-
-  exec {'ifdown br-ex':
-        path         => "/usr/sbin",
-        refreshonly  => true,
-  }
-  ~>
-  exec {'ifup br-ex':
-        path         => "/usr/sbin",
-        refreshonly  => true,
-  }
-  ~>
-  exec {"ovs-vsctl add-port br-ex $public_nic":
-        path         => "/usr/bin",
-        refreshonly  => true,
-        unless       => "ovs-vsctl list-ifaces br-ex | grep $public_nic"
-  }
-
-
-  Class["trystack::controller_networker"]
+  Anchor[ 'neutron configuration anchor end' ]
   ->
   #update bridge-mappings to physnet1
   file_line { 'ovs':
     ensure  => present,
     path    => '/etc/neutron/plugin.ini',
     line    => '[ovs]',
-    require => Class["trystack::controller_networker"],
   }
   ->
   #update bridge-mappings to physnet1
@@ -99,15 +29,16 @@ class trystack::external_net_setup {
     ensure  => present,
     path    => '/etc/neutron/plugin.ini',
     line    => 'bridge_mappings = physnet1:br-ex',
-    require => Class["trystack::controller_networker"],
   }
-  ~>
-  Service['neutron-server']
+  ->
+  Exec["pcs-neutron-server-set-up"]
 
 ##this way we only let controller1 create the neutron resources
 ##controller1 should be the active neutron-server at provisioining time
 
  if $hostname == $controllers_hostnames_array[0] {
+  Exec["all-neutron-nodes-are-up"]
+  ->
   neutron_network { 'provider_network':
     ensure                    => present,
     name                      => 'provider_network',
@@ -116,7 +47,6 @@ class trystack::external_net_setup {
     provider_physical_network => 'physnet1',
     router_external           => true,
     tenant_name               => 'admin',
-    require                   => Service['neutron-server'],
   }
   ->
   neutron_subnet { 'provider_subnet':
