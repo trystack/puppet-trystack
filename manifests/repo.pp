@@ -38,7 +38,7 @@ class trystack::repo {
     }
     ~>
     exec { 'restart-network-presetup':
-      command => 'systemctl restart network'
+      command => 'systemctl restart network',
       path         => ["/usr/sbin/", "/usr/bin/"],
       refreshonly  => 'true',
     }
