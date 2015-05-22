@@ -288,6 +288,18 @@ class trystack::controller_networker {
       ovs_tunnel_iface         =>  $ovs_tunnel_if,
       ovs_tunnel_types         =>  ["vxlan"],
       verbose                  =>  'true',
+      neutron_conf_additional_params => { default_quota => 'default',
+                                      quota_network => '50',
+                                      quota_subnet => '50',
+                                      quota_port => 'default',
+                                      quota_security_group => '50',
+                                      quota_security_group_rule  => 'default',
+                                      quota_vip => 'default',
+                                      quota_pool => 'default',
+                                      quota_router => '50',
+                                      quota_floatingip => '100',
+                                      network_auto_schedule => 'default',
+                                    },
     }
 
     if ($external_network_flag != '') and str2bool($external_network_flag) {
