@@ -86,6 +86,7 @@ class trystack::controller_networker {
     if !$lb_backend_server_names { $lb_backend_server_names = $controllers_hostnames_array }
     if !$neutron_db_password  { $neutron_db_password = $single_password }
     if !$neutron_user_password  { $neutron_user_password = $single_password }
+    if !$neutron_metadata_proxy_secret { $neutron_metadata_proxy_secret = $single_password }
     if !$nova_db_password { $nova_db_password = $single_password }
     if !$nova_user_password { $nova_user_password = $single_password }
     if !$pcmk_server_addrs {$pcmk_server_addrs = $controllers_ip_array}
