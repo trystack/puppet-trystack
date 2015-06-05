@@ -282,6 +282,7 @@ class trystack::controller_networker {
     class { "quickstack::pacemaker::neutron":
       agent_type               =>  $this_agent,
       enable_tunneling         =>  'true',
+      external_network_bridge  =>  'br-ex',
       ml2_mechanism_drivers    =>  $ml2_mech_drivers,
       ml2_network_vlan_ranges  =>  ["physnet1:10:50"],
       odl_controller_ip        =>  $odl_control_ip,
