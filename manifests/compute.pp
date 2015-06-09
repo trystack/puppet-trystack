@@ -59,19 +59,27 @@ class trystack::compute {
 
   } else {
   ##non HA params
-     if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
-     if !$private_ip { fail('private_ip is empty') }
+     ##Mandatory
+     if $private_network == '' { fail('private_network is empty') }
+
+     ##Optional
+     ##Find private interface
+     $ovs_tunnel_if = get_nic_from_network("$private_network")
+     ##Find private ip
+     $private_ip = get_ip_from_nic("$ovs_tunnel_if")
+
      $keystone_private_vip = $private_ip
      $glance_private_vip   = $private_ip
      $nova_private_vip     = $private_ip
      $neutron_private_vip  = $private_ip
-     if !$nova_db_password { fail('nova_db_password is empty') }
-     if !$nova_user_password { fail('nova_user_password is empty') }
+
+     if !$nova_db_password { $nova_db_password = $single_password }
+     if !$nova_user_password { $nova_user_password = $single_password }
      if !$odl_control_ip { $odl_control_ip = $private_ip }
      if !$mysql_ip { $mysql_ip = $private_ip }
      if !$amqp_ip { $amqp_ip = $private_ip }
-     if !$amqp_username { $amqp_username = 'guest' }
-     if !$amqp_password { $amqp_password = 'guest' }
+     if !$amqp_username { $amqp_username = $single_username }
+     if !$amqp_password { $amqp_password = $single_password }
      if !$ceph_mon_host { $ceph_mon_host= ["$private_ip"] }
      if !$ceph_mon_initial_members { $ceph_mon_initial_members = ["$::hostname"] }
   }
