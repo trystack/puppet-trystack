@@ -32,7 +32,7 @@ class trystack::compute {
   if !$ceilometer_metering_secret { $ceilometer_metering_secret = $single_password }
 
   ##HA Global params
-  if $ha_flag {
+  if $ha_flag and str2bool($ha_flag) {
      if $private_network == '' { fail('private_network is empty') }
      if !$keystone_private_vip { fail('keystone_private_vip is empty') }
      if !$glance_private_vip { fail('glance_private_vip is empty') }
