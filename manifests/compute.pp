@@ -61,6 +61,9 @@ class trystack::compute {
   ##non HA params
      ##Mandatory
      if $private_network == '' { fail('private_network is empty') }
+     if ($odl_flag != '') and str2bool($odl_flag) {
+       if $odl_control_ip == '' { fail('odl_control_ip is empty') }
+     }
 
      ##Optional
      ##Find private interface
@@ -75,7 +78,6 @@ class trystack::compute {
 
      if !$nova_db_password { $nova_db_password = $single_password }
      if !$nova_user_password { $nova_user_password = $single_password }
-     if !$odl_control_ip { $odl_control_ip = $private_ip }
      if !$mysql_ip { $mysql_ip = $private_ip }
      if !$amqp_ip { $amqp_ip = $private_ip }
      if !$amqp_username { $amqp_username = $single_username }

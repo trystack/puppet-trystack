@@ -403,6 +403,8 @@ class trystack::controller_networker {
       horizon_ca                    => $quickstack::params::horizon_ca,
       horizon_cert                  => $quickstack::params::horizon_cert,
       horizon_key                   => $quickstack::params::horizon_key,
+
+      keystonerc                    => true,
  
       ml2_mechanism_drivers         => $ml2_mech_drivers,
 
