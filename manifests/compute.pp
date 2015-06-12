@@ -64,6 +64,7 @@ class trystack::compute {
      if ($odl_flag != '') and str2bool($odl_flag) {
        if $odl_control_ip == '' { fail('odl_control_ip is empty') }
      }
+     if $controller_ip == '' { fail('controller_ip is empty') }
 
      ##Optional
      ##Find private interface
@@ -71,15 +72,15 @@ class trystack::compute {
      ##Find private ip
      $private_ip = get_ip_from_nic("$ovs_tunnel_if")
 
-     $keystone_private_vip = $private_ip
-     $glance_private_vip   = $private_ip
-     $nova_private_vip     = $private_ip
-     $neutron_private_vip  = $private_ip
+     $keystone_private_vip = $controller_ip
+     $glance_private_vip   = $controller_ip
+     $nova_private_vip     = $controller_ip
+     $neutron_private_vip  = $controller_ip
 
      if !$nova_db_password { $nova_db_password = $single_password }
      if !$nova_user_password { $nova_user_password = $single_password }
-     if !$mysql_ip { $mysql_ip = $private_ip }
-     if !$amqp_ip { $amqp_ip = $private_ip }
+     if !$mysql_ip { $mysql_ip = $controller_ip }
+     if !$amqp_ip { $amqp_ip = $controller_ip }
      if !$amqp_username { $amqp_username = $single_username }
      if !$amqp_password { $amqp_password = $single_password }
      if !$ceph_mon_host { $ceph_mon_host= ["$private_ip"] }
