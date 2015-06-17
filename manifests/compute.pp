@@ -36,7 +36,7 @@ class trystack::compute {
      if $private_network == '' { fail('private_network is empty') }
      if !$keystone_private_vip { fail('keystone_private_vip is empty') }
      if !$glance_private_vip { fail('glance_private_vip is empty') }
-     if !$nova_private_vip { fail('nova_private_vip is empty') }
+     if !$nova_public_vip { fail('nova_public_vip is empty') }
      if !$nova_db_password { $nova_db_password = $single_password }
      if !$nova_user_password { $nova_user_password = $single_password }
      if !$controllers_ip_array { fail('controllers_ip_array is empty') }
@@ -74,7 +74,7 @@ class trystack::compute {
 
      $keystone_private_vip = $controller_ip
      $glance_private_vip   = $controller_ip
-     $nova_private_vip     = $controller_ip
+     $nova_public_vip      = $controller_ip
      $neutron_private_vip  = $controller_ip
 
      if !$nova_db_password { $nova_db_password = $single_password }
@@ -95,7 +95,7 @@ class trystack::compute {
     libvirt_inject_password      => 'false',
     libvirt_inject_key           => 'false',
     libvirt_images_type          => 'rbd',
-    nova_host                    => $nova_private_vip,
+    nova_host                    => $nova_public_vip,
     nova_db_password             => $nova_db_password,
     nova_user_password           => $nova_user_password,
     private_network              => '',
