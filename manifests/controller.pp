@@ -1,10 +1,22 @@
 class trystack::controller {
+  ###use 8081 as a default work around swift service
+  if $odl_rest_port == '' {$odl_rest_port = '8081'}
+
+  if ($odl_flag != '') and str2bool($odl_flag) {
+     $ml2_mech_drivers = ['opendaylight']
+  }
+  else {
+    $ml2_mech_drivers = ['openvswitch','l2population']
+  }
+
 
   if $admin_email == '' { fail('admin_email is empty') }
   if $admin_password == '' { fail('admin_password is empty') }
 
   if $public_ip == '' { fail('public_ip is empty') }
   if $private_ip == '' { fail('private_ip is empty') }
+
+  if $odl_control_ip == '' { fail('odl_controL_ip is empty, should be the IP of your network node private interface') }
 
   if $mysql_ip == '' { fail('mysql_ip is empty') }
   if $mysql_root_password == '' { fail('mysql_root_password is empty') }
@@ -87,6 +99,7 @@ class trystack::controller {
     horizon_cert                  => $quickstack::params::horizon_cert,
     horizon_key                   => $quickstack::params::horizon_key,
 
+    ml2_mechanism_drivers         => $ml2_mech_drivers,
     #neutron                       => true,
     neutron_metadata_proxy_secret => $neutron_metadata_shared_secret,
     neutron_db_password           => $neutron_db_password,
@@ -94,6 +107,8 @@ class trystack::controller {
 
     nova_db_password              => $nova_db_password,
     nova_user_password            => $nova_user_password,
+    odl_controller_ip             => $odl_control_ip,
+    odl_controller_port           => $odl_rest_port,
 
     swift_shared_secret           => $swift_shared_secret,
     swift_admin_password          => $swift_admin_password,

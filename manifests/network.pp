@@ -1,6 +1,27 @@
 class trystack::network {
+  ###use 8081 as a default work around swift service
+  if $odl_rest_port == '' {$odl_rest_port = '8081'}
 
+  if ($odl_flag != '') and str2bool($odl_flag) {
+     $ml2_mech_drivers = ['opendaylight']
+     $this_agent = 'opendaylight'
+     class {"opendaylight":
+       odl_rest_port => $odl_rest_port,
+       extra_features => ['odl-base-all', 'odl-aaa-authn', 'odl-restconf', 'odl-nsf-all', 'odl-adsal-northbound', 'odl-mdsal-apidocs', 'odl-ovsdb-openstack', 'odl-ovsdb-northbound', 'odl-dlux-core'],
+     }
+  }
+  else {
+    $ml2_mech_drivers = ['openvswitch','l2population']
+    $this_agent = 'ovs'
+  }
+
+
+
+  if $ovs_tunnel_if == '' { fail('ovs_tunnel_if is empty') }
   if $private_ip == '' { fail('private_ip is empty') }
+
+  if $odl_control_ip == '' { fail('odl_controL_ip is empty, should be the IP of your network node private interface') }
+
   if $mysql_ip == '' { fail('mysql_ip is empty') }
   if $amqp_ip == '' { fail('amqp_ip is empty') }
 
@@ -12,6 +33,7 @@ class trystack::network {
   if $neutron_metadata_shared_secret == '' { fail('neutron_metadata_shared_secret is empty') }
 
   class { "quickstack::neutron::networker":
+    agent_type                    => $this_agent,
     neutron_metadata_proxy_secret => $neutron_metadata_shared_secret,
     neutron_db_password           => $neutron_db_password,
     neutron_user_password         => $neutron_user_password,
@@ -20,9 +42,8 @@ class trystack::network {
 
     controller_priv_host          => $private_ip,
 
-    agent_type                    => 'ovs',
     enable_tunneling              => true,
-    ovs_tunnel_iface              => 'em1',
+    ovs_tunnel_iface              => $ovs_tunnel_if,
     ovs_tunnel_network            => '',
     ovs_l2_population             => 'True',
     ovs_tunnel_types              => ['vxlan'],
@@ -34,5 +55,8 @@ class trystack::network {
     amqp_host                     => $amqp_ip,
     amqp_username                 => 'guest',
     amqp_password                 => 'guest',
+
+    ml2_mechanism_drivers        => $ml2_mech_drivers,
+    odl_controller_ip            => $odl_control_ip,
   }
 }
